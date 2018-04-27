@@ -41,7 +41,7 @@ apps=(
 # Install apps to /Applications
 # Default is /Users/$user/Applications
 echo "Installing brew apps for you"
-brew install  ${brew_apps[@]}
+brew install ${brew_apps[@]}
 echo "Installing apps like slack, spotify, vscode, chrome, ff, evernote, vlc, iterm2, skype for you"
 brew cask install --appdir="/Applications" ${apps[@]}
 
