@@ -4,6 +4,9 @@
 $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 mv .bash_profile ~/.bash_profile && source ~/.bash_profile
 
+#install Command Line Tools in Mac OS X
+xcode-select --install;
+
 ## Necessary brew things that I think are needed
 brew install git;
 brew install gpg2;
