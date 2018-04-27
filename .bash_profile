@@ -19,3 +19,7 @@ alias ls='ls -GFh'
 #GPG_TTY nonsense
 ###########
 export GPG_TTY=$(tty)
+
+
+# Add Visual Studio Code (code) just in case
+export PATH="\$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
