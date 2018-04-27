@@ -2,7 +2,7 @@
 
 ###Get Brew first
 $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-cp .bash_profile ~/.bash_profile && source ~/.bash_profile
+mv .bash_profile ~/.bash_profile && source ~/.bash_profile
 
 ## Necessary brew things that I think are needed
 brew install git;
