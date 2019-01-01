@@ -6,6 +6,12 @@ export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
 
 ###########
+# Increase command history because... source : https://apple.stackexchange.com/questions/246621/cant-increase-mac-osx-bash-shell-history-length
+###########
+export HISTFILESIZE=1000000
+export HISTSIZE=1000000 
+
+###########
 #brew_stuff
 ###########
 export PATH="/usr/local/bin:${PATH}"
