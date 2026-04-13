@@ -8,7 +8,7 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STEP=0
-TOTAL=14
+TOTAL=16
 
 step() {
     STEP=$((STEP + 1))
@@ -250,7 +250,18 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 14. VS Code extensions
+# 15. iTerm2 profile
+# -----------------------------------------------------------------------------
+step "iTerm2 profile"
+if [[ -f "$REPO_DIR/iterm2_profile.plist" ]]; then
+    defaults import com.googlecode.iterm2 "$REPO_DIR/iterm2_profile.plist"
+    echo "  Imported. Restart iTerm2 to apply."
+else
+    echo "  No iterm2_profile.plist found, skipping."
+fi
+
+# -----------------------------------------------------------------------------
+# 16. VS Code extensions
 # -----------------------------------------------------------------------------
 step "VS Code extensions"
 if command -v code &>/dev/null; then
@@ -264,12 +275,24 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# Git config — fill in before running, then uncomment
+# Git config
 # -----------------------------------------------------------------------------
-# git config --global user.name "First Last"
-# git config --global user.email "you@example.com"
-# git config --global user.signingkey <gpg-key-id>
-# git config --global commit.gpgsign true
+step "Git config"
+if [[ -z "$(git config --global user.name 2>/dev/null)" ]]; then
+    read -rp "  Git name: " git_name
+    read -rp "  Git email: " git_email
+    read -rp "  GPG signing key ID (leave blank to skip): " git_signingkey
+    git config --global user.name "$git_name"
+    git config --global user.email "$git_email"
+    if [[ -n "$git_signingkey" ]]; then
+        git config --global user.signingkey "$git_signingkey"
+        git config --global commit.gpgsign true
+        git config --global gpg.program gpg
+    fi
+    echo "  Git config set."
+else
+    echo "  Already configured as: $(git config --global user.name) <$(git config --global user.email)>"
+fi
 
 # -----------------------------------------------------------------------------
 echo ""
