@@ -13,8 +13,8 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-# Plugins bundled with oh-my-zsh
-plugins=(git)
+# Plugins — cloned to ~/.oh-my-zsh/custom/plugins/ by bootstrap.sh / bootstrap-pi.sh
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 
 # Docker CLI completions — must be added to fpath before oh-my-zsh calls compinit
 [[ -d "$HOME/.docker/completions" ]] && fpath=("$HOME/.docker/completions" $fpath)
@@ -22,23 +22,13 @@ plugins=(git)
 source "$ZSH/oh-my-zsh.sh"
 
 # -----------------------------------------------------------------------------
-# zsh plugins (installed via brew)
-# -----------------------------------------------------------------------------
-BREW_PREFIX="${HOMEBREW_PREFIX:-/usr/local}"
-
-[[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
-    source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
-[[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
-    source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-
-# -----------------------------------------------------------------------------
 # PATH
 # -----------------------------------------------------------------------------
 export PATH="/usr/local/bin:/usr/local/sbin:$HOME/.local/bin:$PATH"
 
-# VS Code CLI
-export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+# VS Code CLI (macOS only)
+[[ -d "/Applications/Visual Studio Code.app" ]] && \
+    export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
 # krew (kubectl plugin manager)
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
@@ -48,7 +38,7 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 # -----------------------------------------------------------------------------
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+[[ -x "$PYENV_ROOT/bin/pyenv" ]] && eval "$(pyenv init -)"
 
 # -----------------------------------------------------------------------------
 # Go
@@ -58,10 +48,14 @@ export GOBIN="$GOPATH/bin"
 export PATH="$PATH:$GOBIN"
 
 # -----------------------------------------------------------------------------
-# .NET
+# .NET (macOS / Homebrew only)
 # -----------------------------------------------------------------------------
-export DOTNET_ROOT="${HOMEBREW_PREFIX:-/usr/local}/opt/dotnet@9/libexec"
-export PATH="$DOTNET_ROOT:$PATH"
+_DOTNET_ROOT="${HOMEBREW_PREFIX:-/usr/local}/opt/dotnet@9/libexec"
+if [[ -d "$_DOTNET_ROOT" ]]; then
+    export DOTNET_ROOT="$_DOTNET_ROOT"
+    export PATH="$DOTNET_ROOT:$PATH"
+fi
+unset _DOTNET_ROOT
 
 # -----------------------------------------------------------------------------
 # History
