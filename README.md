@@ -43,6 +43,12 @@ bash bootstrap-pi.sh
 
 > Both scripts prompt interactively for git name/email/signing key — no manual editing required before running.
 
+Pass `--dry-run` to preview what each step would do without making any changes:
+
+```bash
+bash bootstrap.sh --dry-run
+```
+
 ## Files
 
 | File | Purpose |
