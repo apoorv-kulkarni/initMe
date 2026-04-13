@@ -258,6 +258,12 @@ ln -sf "$REPO_DIR/zshrc" "$HOME/.zshrc"
 echo "  Symlinked: ~/.zshrc -> $REPO_DIR/zshrc"
 ln -sf "$REPO_DIR/p10k.zsh" "$HOME/.p10k.zsh"
 echo "  Symlinked: ~/.p10k.zsh -> $REPO_DIR/p10k.zsh"
+mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
+ln -sf "$REPO_DIR/ssh_config" "$HOME/.ssh/config" && chmod 600 "$HOME/.ssh/config"
+echo "  Symlinked: ~/.ssh/config -> $REPO_DIR/ssh_config"
+git config --global core.excludesfile "$HOME/.gitignore_global"
+ln -sf "$REPO_DIR/gitignore_global" "$HOME/.gitignore_global"
+echo "  Symlinked: ~/.gitignore_global -> $REPO_DIR/gitignore_global"
 
 # Set zsh as default shell if it isn't already
 if [[ "$SHELL" != "$(which zsh)" ]]; then
