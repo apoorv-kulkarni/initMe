@@ -165,6 +165,8 @@ if [[ -f "$HOME/.zshrc" && ! -L "$HOME/.zshrc" ]]; then
 fi
 ln -sf "$REPO_DIR/zshrc" "$HOME/.zshrc"
 echo "  Symlinked: ~/.zshrc -> $REPO_DIR/zshrc"
+ln -sf "$REPO_DIR/p10k.zsh" "$HOME/.p10k.zsh"
+echo "  Symlinked: ~/.p10k.zsh -> $REPO_DIR/p10k.zsh"
 
 # -----------------------------------------------------------------------------
 # 12. macOS defaults
