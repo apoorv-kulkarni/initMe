@@ -1,6 +1,6 @@
 # initMe
 
-The fastest way to go from a blank machine to a fully configured dev environment — optimized for infra/SRE work. Born out of getting tired of manually moving configs between Macs.
+The fastest way to go from a blank machine to a fully configured dev environment — optimized for infra/SRE work. Born out of me getting really tired of manually moving configs between Macs.
 
 Targets: **macOS** (primary) and **Raspberry Pi OS** (Debian).
 
@@ -17,6 +17,7 @@ Targets: **macOS** (primary) and **Raspberry Pi OS** (Debian).
 | SSH | Generate or import + keychain | Generate or import |
 | GitHub CLI | Install + `gh auth login` | Install + `gh auth login` |
 | macOS defaults | Finder, key repeat, Dock, screenshots | — |
+| iTerm2 | Profile imported from repo | — |
 | Repo sync | launchd agent (every 6h) | cron (every 6h) |
 | VS Code | Extensions from list | — |
 
@@ -40,7 +41,7 @@ cd ~/myLab/initMe
 bash bootstrap-pi.sh
 ```
 
-> **Before running:** fill in and uncomment the git config block at the bottom of the relevant bootstrap script.
+> Both scripts prompt interactively for git name/email/signing key — no manual editing required before running.
 
 ## Files
 
@@ -49,13 +50,17 @@ bash bootstrap-pi.sh
 | `bootstrap.sh` | macOS setup — run this |
 | `bootstrap-pi.sh` | Raspberry Pi setup — run this |
 | `Brewfile` | All Homebrew formulae and cask apps |
-| `zshrc` | Shared shell config (symlinked to `~/.zshrc` on both platforms) |
+| `zshrc` | Shell config — symlinked to `~/.zshrc` |
+| `p10k.zsh` | Powerlevel10k prompt config — symlinked to `~/.p10k.zsh` |
+| `ssh_config` | SSH client config — symlinked to `~/.ssh/config` |
+| `gitignore_global` | Global gitignore — wired via `core.excludesfile` |
+| `iterm2_profile.plist` | iTerm2 preferences — imported on bootstrap |
 | `vscode-extensions-list.txt` | VS Code extensions to install |
 | `sync-repos.sh` | Fetches updates for all git repos under `~/myLab` |
 
 ## Dotfiles are symlinked, not copied
 
-`~/.zshrc` is a symlink to `zshrc` in this repo. Any edits you make to your shell config are automatically in version control — no drift, no manual syncing.
+`zshrc`, `p10k.zsh`, `ssh_config`, and `gitignore_global` are all symlinked from this repo into their expected locations. Edits on the live files are automatically in version control — no drift, no manual syncing.
 
 ## Keeping packages up to date
 
