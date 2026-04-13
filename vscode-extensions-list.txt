@@ -1,0 +1,49 @@
+# Language support
+golang.go
+ms-python.python
+ms-python.vscode-pylance
+ms-python.debugpy
+ms-python.vscode-python-envs
+ms-vscode.cpptools
+ms-vscode.makefile-tools
+ms-dotnettools.csharp
+ms-dotnettools.vscode-dotnet-runtime
+ms-vscode.powershell
+redhat.vscode-yaml
+
+# Protobuf
+peterj.proto
+pbkit.vscode-pbkit
+
+# Infrastructure
+hashicorp.terraform
+hashicorp.hcl
+
+# SQL & databases
+ms-mssql.mssql
+ms-mssql.data-workspace-vscode
+ms-mssql.sql-bindings-vscode
+ms-mssql.sql-database-projects-vscode
+formulahendry.vscode-mysql
+
+# Docker & Kubernetes
+ms-azuretools.vscode-docker
+ms-azuretools.vscode-containers
+ms-vscode-remote.remote-containers
+ms-kubernetes-tools.vscode-kubernetes-tools
+ms-kubernetes-tools.kind-vscode
+
+# Remote development
+ms-vscode-remote.remote-ssh
+ms-vscode-remote.remote-ssh-edit
+ms-vscode.remote-explorer
+
+# Git & GitHub
+github.vscode-pull-request-github
+github.vscode-github-actions
+github.copilot-chat
+
+# Editor UX
+vscode-icons-team.vscode-icons
+aaron-bond.better-comments
+esbenp.prettier-vscode
