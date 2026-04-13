@@ -75,7 +75,11 @@ export EDITOR=vim
 # -----------------------------------------------------------------------------
 # Aliases
 # -----------------------------------------------------------------------------
-alias ls='ls -GFh'
+if [[ "$(uname)" == "Darwin" ]]; then
+    alias ls='ls -GFh'
+else
+    alias ls='ls --color=auto -Fh'
+fi
 alias ll='ls -lah'
 alias grep='grep --color=auto'
 

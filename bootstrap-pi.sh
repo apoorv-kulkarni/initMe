@@ -9,7 +9,7 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARCH="$(dpkg --print-architecture 2>/dev/null || uname -m)"
 STEP=0
-TOTAL=12
+TOTAL=13
 
 step() {
     STEP=$((STEP + 1))
@@ -170,7 +170,27 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 9. SSH key
+# 9. yq
+# -----------------------------------------------------------------------------
+step "yq"
+if ! command -v yq &>/dev/null; then
+    echo "  Installing..."
+    YQ_VERSION=$(curl -s https://api.github.com/repos/mikefarah/yq/releases/latest | jq -r .tag_name)
+    case "$ARCH" in
+        arm64|aarch64) YQ_ARCH="arm64" ;;
+        armhf|armv7l)  YQ_ARCH="arm" ;;
+        amd64|x86_64)  YQ_ARCH="amd64" ;;
+    esac
+    curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${YQ_ARCH}" -o /tmp/yq
+    sudo install -m 0755 /tmp/yq /usr/local/bin/yq
+    rm /tmp/yq
+    echo "  Installed: $(yq --version)"
+else
+    echo "  Already installed: $(yq --version)"
+fi
+
+# -----------------------------------------------------------------------------
+# 11. SSH key
 # -----------------------------------------------------------------------------
 step "SSH key"
 mkdir -p "$HOME/.ssh"
@@ -198,7 +218,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 10. oh-my-zsh + Powerlevel10k + plugins
+# 12. oh-my-zsh + Powerlevel10k + plugins
 # -----------------------------------------------------------------------------
 step "oh-my-zsh + Powerlevel10k + plugins"
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
@@ -227,7 +247,7 @@ for plugin in zsh-autosuggestions zsh-syntax-highlighting; do
 done
 
 # -----------------------------------------------------------------------------
-# 11. zshrc — symlink
+# 13. zshrc — symlink
 # -----------------------------------------------------------------------------
 step "zshrc"
 if [[ -f "$HOME/.zshrc" && ! -L "$HOME/.zshrc" ]]; then
@@ -236,6 +256,8 @@ if [[ -f "$HOME/.zshrc" && ! -L "$HOME/.zshrc" ]]; then
 fi
 ln -sf "$REPO_DIR/zshrc" "$HOME/.zshrc"
 echo "  Symlinked: ~/.zshrc -> $REPO_DIR/zshrc"
+ln -sf "$REPO_DIR/p10k.zsh" "$HOME/.p10k.zsh"
+echo "  Symlinked: ~/.p10k.zsh -> $REPO_DIR/p10k.zsh"
 
 # Set zsh as default shell if it isn't already
 if [[ "$SHELL" != "$(which zsh)" ]]; then
@@ -244,7 +266,7 @@ if [[ "$SHELL" != "$(which zsh)" ]]; then
 fi
 
 # -----------------------------------------------------------------------------
-# 12. Repo sync (cron)
+# 13. Repo sync (cron)
 # -----------------------------------------------------------------------------
 step "Repo sync (cron)"
 SYNC_SCRIPT="$REPO_DIR/sync-repos.sh"
