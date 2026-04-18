@@ -86,7 +86,7 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 if [[ -z "$(pyenv versions --bare 2>/dev/null)" ]]; then
     echo "  Installing latest stable Python..."
-    LATEST_PYTHON=$(pyenv install --list | grep -E '^\s+3\.[0-9]+\.[0-9]+$' | grep -v 'dev\|rc\|alpha\|beta' | tail -1 | tr -d ' ')
+    LATEST_PYTHON=$(pyenv install --list | grep -E '^\s+[0-9]+\.[0-9]+\.[0-9]+$' | grep -v 'dev\|rc\|alpha\|beta' | tr -d ' ' | sort -V | tail -1)
     run pyenv install "$LATEST_PYTHON"
     run pyenv global "$LATEST_PYTHON"
     echo "  Python $LATEST_PYTHON set as global"
@@ -105,6 +105,7 @@ if [[ ! -f "$HOME/.ssh/id_ed25519" && ! -f "$HOME/.ssh/id_rsa" ]]; then
     echo "  No SSH key found. Generating a new ed25519 key."
     if ! $DRY_RUN; then
         read -rp "  Email for SSH key: " ssh_email
+        # Interactive passphrase prompt is intentional — key will be keychain-stored after.
         ssh-keygen -t ed25519 -C "$ssh_email" -f "$HOME/.ssh/id_ed25519"
         chmod 600 "$HOME/.ssh/id_ed25519"
         chmod 644 "$HOME/.ssh/id_ed25519.pub"
