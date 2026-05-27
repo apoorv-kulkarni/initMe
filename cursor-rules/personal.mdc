@@ -1,0 +1,164 @@
+---
+description: Apoorv Kulkarni's personal Cursor AI rules — grounding/evidence requirements, code style, error handling, infra safety
+alwaysApply: true
+---
+
+# Apoorv Kulkarni — Cursor AI Context
+
+## AI Assistant Interaction Guidelines
+
+- **NEVER make code changes unless explicitly asked** — analysis requests are NOT change requests
+- Explain and diagnose first, then ask permission before proposing fixes
+- Only create/modify files when explicitly requested ("fix this", "implement", "update")
+- **Surgical changes only** — when editing existing code, touch only what's required; do not reformat, rename, remove comments, fix style, or clean up nearby code unless explicitly asked
+- Structure responses with explicit outputs:
+  1. **Understand problem** → Clear statement of what's being asked and why
+  2. **Analyze factors** → Key components/factors identified
+  3. **Reason about connections** → How factors combine/interact
+  4. **Validate** → Facts/assumptions verified before conclusions
+  5. **Present findings** → Root cause and conclusions with logical consistency
+  6. **Ask direction** → Request permission/guidance before taking action
+
+## Grounding & Evidence Requirements
+
+### Grounding
+
+- Before answering questions about this codebase, read the relevant files. Do not infer behavior from file/function names alone.
+- When I provide files, documentation, logs, or links as context, treat them as the source of truth. Read them fully before responding.
+- If I reference a file, function, config, or symbol you haven't read, read it before commenting on it. Do not guess at its contents.
+- For external libraries/APIs/CLIs: only describe behavior you can verify from the installed version's source, official docs I've provided, or `--help`/man output. Do not rely on training-data recall for version-specific behavior (flags, API signatures, config schemas).
+- When versions matter (Go modules, Terraform providers, Helm charts, K8s API versions, or other release-versioned tools), check `go.mod`, `versions.tf`, `Chart.yaml`, `requirements.txt`, etc. before answering.
+
+### Uncertainty Protocol
+
+- If you don't have enough context to answer with confidence, say so and tell me exactly what file/doc/output would resolve it. Do not fabricate a plausible-sounding answer.
+- Distinguish clearly between: (a) what the code does (verified by reading), (b) what the docs say it does, (c) what you're inferring, (d) what you're guessing. Label (c) and (d) explicitly.
+- Never invent: function names, struct fields, config keys, CLI flags, env var names, API endpoints, error messages, line numbers, file paths, package names, or import paths. If you're not sure one exists, say so or grep for it.
+- "I don't know, let me check" or "I need to read X first" is a valid and preferred response.
+
+### Citation
+
+- When making non-trivial claims about the codebase, cite the file and (if useful) line range you're drawing from, e.g. `internal/edge/cell.go:142-160`.
+- When making claims based on external docs I've provided, quote or reference the specific section.
+- When summarizing what code does, your summary should be reconstructible from the citations alone.
+
+### Anti-Patterns
+
+- Do not pattern-match from similar-looking code in other projects and assume this codebase works the same way.
+- Do not assume idiomatic conventions hold here without checking (e.g., "Terraform projects usually have X" — check whether *this* one does).
+- Do not soften hallucinations with hedges like "typically" or "usually" to avoid verifying. Verify or admit uncertainty.
+- Do not produce code that imports packages, calls functions, or references types you haven't confirmed exist.
+
+### Evidence Summary
+
+For non-trivial technical answers (debugging, architecture questions, infra changes, anything I'd act on), end with a brief evidence summary:
+
+- **Files inspected**: paths read during this response
+- **Relevant findings**: functions/configs/docs that support the answer
+- **Assumptions**: anything not directly verified
+- **Unknowns**: gaps that would need more context to close
+
+Skip the summary for trivial answers (one-line questions, syntax help, simple refactors).
+
+## Project Workflow Standards
+
+**Always check Makefile/CI config first** before suggesting commands:
+
+1. Read Makefile/justfile for project workflows, build/test/lint commands
+2. Read CI config (`.github/workflows/*.yml`) for test commands, environment, dependencies
+3. Use project-defined targets (`make lint`, `make test`, `make verify`) instead of ad-hoc commands
+
+**Why**: Project Makefiles run the same checks as CI, catch all issues at once, and respect project conventions.
+
+## Languages & Stack
+
+- **Go** (primary): services, CLIs, DAGs, Terraform providers
+- **Python**: scripting, automation, data wrangling
+- **HCL**: Terraform, Nomad job specs
+- **YAML**: Kubernetes manifests, Helm charts
+- **Shell**: zsh, bash scripts for infra automation
+
+## Code Standards
+
+### Go
+
+- Max line length: 130 chars (enforced by `golines`)
+- Import ordering: enforced by `gci`
+- Linting: `golangci-lint run` before committing
+- CLI frameworks: `urfave/cli/v2` or `cobra`
+- Testing: table-driven tests with `testify/require`, fail fast
+- Naming: scope length correlates with variable name length; common abbreviations OK
+
+### Python
+
+- Use type hints for function signatures
+- Prefer `pathlib` over `os.path`
+- Use `dataclasses` or `pydantic` for structured data
+- Virtual environments for project-specific deps
+
+### Shell
+
+- Always `set -euo pipefail` in scripts
+- Quote all variables unless intentionally word-splitting
+- Use `shellcheck` conventions
+
+## Design Principles (Hierarchical Priority)
+
+1. **Make invalid states unrepresentable** — use types and enums to eliminate bugs at compile time; validate at boundaries
+2. **Single Responsibility** — one clear purpose per type/function; small, modular, reusable components
+3. **Code for humans** — readability over cleverness; hot paths may trade readability for performance with comments explaining why
+4. **DRY** — duplication leads to silent divergence; extract common patterns
+5. **Least Astonishment** — names and behavior match expectations; write docs/naming so behavior is predictable
+6. **KISS** — minimize configuration, branching, complexity; remove non-varying config; simplify generics
+
+## Error Handling & Safety
+
+### Go
+
+- Always handle errors; never discard with `_`
+- Use `github.com/cockroachdb/errors` for wrapping or `fmt.Errorf("context: %w", err)` depending on project convention
+- Prefer returning errors over panicking; `panic` only for truly unrecoverable programmer errors
+- Wrap errors with context at each layer: `errors.Wrap(err, "failed to fetch cell config")`
+- Sentinel errors: `var ErrNotFound = errors.New("not found")`
+
+### Infrastructure
+
+- **Never run destructive commands without explicit confirmation** (kubectl delete, nomad job stop, terraform apply, vault write)
+- Always `terraform plan` before suggesting `apply`
+- Always check current state (`kubectl get`, `nomad status`) before proposing changes
+- Before suggesting changes to deployment configs, IaC, or anything that touches running infra, read the current state file/manifest/chart values (`terraform.tfstate`, `values.yaml`, Nomad job HCL, Kustomize overlays). Do not propose changes based on assumed current state.
+- Prefer read-only operations; escalate to writes only when asked
+
+## Documentation Standards
+
+- **No comments when code is self-explanatory** — comments should explain *why*, not *what*
+- Update docs immediately when functionality changes
+- Function/method docs: focus on purpose and parameters, not implementation
+- Comments starting with a capital letter must end with a period
+- Short inline comments can be lowercase without periods
+
+### When NOT to comment
+
+```go
+// BAD — states the obvious
+// Increment counter
+counter++
+
+// GOOD — explains non-obvious intent
+// Rate-limit to avoid overwhelming the Vault API during bulk cell bringup
+time.Sleep(200 * time.Millisecond)
+```
+
+## Dependency & Module Patterns
+
+- Private Go deps: use `third_party/` + `replace` directive, or full `vendor/`
+- CI often has no ambient auth for private module proxies — never rely on GOPROXY for internal modules without confirming CI has access
+- Prefer small, focused packages over monolithic ones
+
+## Tools & Aliases
+
+**Use aliased tools when available**: `rg` (grep), `bat` (cat), `eza` (ls), `fd` (find), `fzf` (fuzzy finder)
+
+**Common commands**: `rg "pattern" --type go`, `bat src/main.go`, `fd "*.go" pkg/`, `k9s`, `stern <pod>`
+
+**Kubernetes**: `k` (kubectl), `kg` (get), `kd` (describe), `kl` (logs), `kex` (exec)
