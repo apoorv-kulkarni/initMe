@@ -8,7 +8,7 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STEP=0
-TOTAL=16
+TOTAL=17
 
 DRY_RUN=false
 [[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true && echo "DRY RUN — previewing steps, no changes will be made"
@@ -334,6 +334,14 @@ if [[ -z "$(git config --global user.name 2>/dev/null)" ]]; then
 else
     echo "  Already configured as: $(git config --global user.name) <$(git config --global user.email)>"
 fi
+
+# -----------------------------------------------------------------------------
+# 17. Cursor rules
+# -----------------------------------------------------------------------------
+step "Cursor rules"
+run mkdir -p "$HOME/.cursor/rules"
+run ln -sf "$REPO_DIR/cursor-rules/personal.mdc" "$HOME/.cursor/rules/personal.mdc"
+echo "  Symlinked: ~/.cursor/rules/personal.mdc -> $REPO_DIR/cursor-rules/personal.mdc"
 
 # -----------------------------------------------------------------------------
 echo ""
