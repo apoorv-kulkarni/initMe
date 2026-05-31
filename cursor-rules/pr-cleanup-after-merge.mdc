@@ -1,0 +1,85 @@
+---
+description: After helping create a PR, check N min later whether it merged and clean up local branches
+alwaysApply: true
+---
+
+# Post-PR cleanup
+
+When you help the user create a PR (via `gh pr create`, `git push` of a new
+branch, or similar), schedule a check N minutes later. If the chat is
+still active at that point, verify whether the PR merged and clean up
+local branches.
+
+## Timer (configurable)
+
+Default: **30 minutes**. Override via user instruction in the same turn
+("create the PR and check in 10 min", "no auto-check, I'll handle it").
+
+Heuristic suggestions (apply silently; mention only if the user asks):
+
+| Situation | Suggested delay |
+|---|---|
+| `gh pr merge --auto` enabled + small diff + green CI history | 5–10 min |
+| Solo-owner / personal repo, no reviewers | 5 min |
+| Roblox infra repo with 1–2 reviewers (normal case) | 30 min (default) |
+| Repo with slow CI (prophase e2e, eecd e2e) | 45–60 min |
+| Cross-team / many-reviewers PR | 90 min, or skip auto-check entirely |
+
+If unsure, ask the user once at PR-creation time: "check in X min?"
+After that, don't re-prompt for the same PR.
+
+## Trigger
+
+After a successful `gh pr create`, capture the PR URL/number, repo slug,
+and chosen delay (in seconds), then schedule a self-notification:
+
+```bash
+# Reminder fires once after <delay>s. The sentinel string is matched by
+# notify_on_output so the agent gets woken up.
+sleep <delay> && echo "PR-CLEANUP-CHECK <repo-slug> <pr-number>"
+```
+
+Set `block_until_ms: 0` (immediate background) and configure
+`notify_on_output` with `pattern: "PR-CLEANUP-CHECK"` and a short reason
+like `PR ready to verify`.
+
+## When the reminder fires
+
+1. Check merge state, do not assume merged just because time passed:
+
+   ```bash
+   gh pr view <pr-number> --repo <repo-slug> \
+     --json state,mergedAt,baseRefName,headRefName
+   ```
+
+2. If `state != MERGED`: report current state to the user, ask whether
+   to reschedule another 30-min check, close, or wait. Do nothing else.
+
+3. If `state == MERGED`, in the repo's working tree (default to the
+   workspace root that originated the PR; ask if ambiguous):
+
+   ```bash
+   git checkout <baseRefName>   # NOT hardcoded main/master - release branches matter
+   git pull --ff-only            # the default-branch sync cron also does this hourly; safe to repeat
+   gprune -f                     # ~/work/dotfiles/zsh/aliases.sh: fetch --prune + delete [gone] branches
+   ```
+
+4. If `gprune` isn't on PATH (non-interactive shells don't source
+   `aliases.sh`), fall back to the raw one-liner:
+
+   ```bash
+   git fetch --prune && \
+     git branch -vv | awk '/: gone\]/ {print $1}' | xargs -r git branch -D
+   ```
+
+## Discipline
+
+- Only switch branches if the working tree is clean
+  (`git status --porcelain` empty). Otherwise report and stop.
+- Never `push --force`, never touch remote branches.
+- This only fires while the chat is active. If the user closes the
+  chat, the timer dies with it. No recovery on next session unless
+  the user asks.
+- The hourly `~/bin/sync-default-branches` launchd job already handles
+  fast-forward of default branches across all `~/work/` repos. This
+  rule adds the per-PR-merge prune step the cron doesn't do.
