@@ -1,0 +1,42 @@
+---
+description: Do not use em dashes in any output
+alwaysApply: true
+---
+
+# No Em Dashes
+
+Do not use em dashes (`—`, U+2014) in any output. This includes assistant
+messages, code comments, docs, commit messages, PR descriptions, generated
+prose, drafted Slack posts, anything.
+
+The rule applies regardless of context. When summarizing or paraphrasing
+other text, substitute or rephrase rather than copying an em dash through.
+
+## Substitutes (pick whichever fits)
+
+- **Period.** Best default. Splits the thought cleanly.
+- **Comma,** when the second clause modifies the first.
+- **Colon:** when the second clause defines, lists, or expands.
+- **Parentheses** for true asides.
+- **" - "** (space hyphen space) when none of the above flows naturally.
+
+## Examples
+
+BAD
+- The cell is healthy — all 14 ArgoCD apps are Synced.
+- c208 took 3× the effort — it was the first sitetest cell in IAD4.
+- Three durable fixes are open — Path B, registry hostname, AppRole mirror.
+
+GOOD
+- The cell is healthy. All 14 ArgoCD apps are Synced.
+- c208 took 3× the effort because it was the first sitetest cell in IAD4.
+- Three durable fixes are open: Path B, registry hostname, AppRole mirror.
+
+## Other dashes are fine
+
+- **Hyphen** (`-`, in compound words like `cell-manager`, `well-known`): keep as is.
+- **En dash** (`–`, U+2013, in numeric ranges like `May 19–20`): keep as is.
+- **Em dash** (`—`, U+2014): do not use.
+
+If you can't tell whether a character is an em dash or an en dash at a glance,
+default to not using it and rephrase the sentence.
