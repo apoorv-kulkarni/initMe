@@ -16,7 +16,7 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
 fi
 
 DRY_RUN=false
-[[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true && echo "DRY RUN — previews file/system mutations only (may still adjust this shell's PATH to detect brew/pyenv)."
+[[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true && echo "DRY RUN — previews file/system mutations; skips Homebrew/pyenv environment initialization."
 
 run() {
     if $DRY_RUN; then

@@ -35,7 +35,7 @@ Run `bash bootstrap.sh` (macOS) or `bash bootstrap-pi.sh` (Pi) if you still need
 
 ## Review before running
 
-`bootstrap.sh` installs packages, changes macOS system defaults (with a prompt), registers a launchd job, and may generate SSH keys. `bootstrap.sh --dry-run` previews mutations; it may still adjust the current shell PATH to detect brew/pyenv.
+`bootstrap.sh` installs packages, changes macOS system defaults (with a prompt), registers a launchd job, and may generate SSH keys. `--dry-run` previews file/system mutations and skips Homebrew/pyenv environment initialization.
 
 ```bash
 bash bootstrap.sh --dry-run
