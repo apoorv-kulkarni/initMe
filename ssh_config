@@ -1,5 +1,7 @@
-# Matches keys created by bootstrap.sh (ed25519). id_rsa is a fallback for older keys.
+# Matches keys created by bootstrap (ed25519). id_rsa is a fallback for older keys.
+# IgnoreUnknown keeps UseKeychain valid on macOS without errors on Linux/Pi OpenSSH.
 Host github.com
+  IgnoreUnknown UseKeychain
   AddKeysToAgent yes
   UseKeychain yes
   IdentitiesOnly yes

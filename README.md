@@ -6,14 +6,7 @@ Repos live under **`~/myLab/`** (each project is usually its own git repo). init
 
 Targets: **macOS** (`bootstrap.sh`) and **Raspberry Pi OS** (`bootstrap-pi.sh`). There is no single cross-platform bootstrap; each script refuses the wrong OS.
 
-## Review before running
-
-`bootstrap.sh` installs packages, changes macOS system defaults (with a prompt), registers a launchd job, and may generate SSH keys. Use `--dry-run` to preview steps without applying them:
-
-```bash
-bash bootstrap.sh --dry-run
-```
-
+## Quick Start
 
 ### On a new Mac (full setup from scratch)
 
@@ -29,12 +22,6 @@ bash clone-mylab.sh
 exec zsh
 ```
 
-Preview bootstrap without applying changes:
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apoorv-kulkarni/initMe/HEAD/install-macos.sh)" -- --dry-run
-```
-
 ### On a machine that already has tools installed
 
 ```bash
@@ -45,6 +32,20 @@ exec zsh
 ```
 
 Run `bash bootstrap.sh` (macOS) or `bash bootstrap-pi.sh` (Pi) if you still need Homebrew packages, launchd sync, etc.
+
+## Review before running
+
+`bootstrap.sh` installs packages, changes macOS system defaults (with a prompt), registers a launchd job, and may generate SSH keys. Preview without applying:
+
+```bash
+bash bootstrap.sh --dry-run
+```
+
+Or preview the curl installer path:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apoorv-kulkarni/initMe/HEAD/install-macos.sh)" -- --dry-run
+```
 
 ## Structure
 
@@ -59,10 +60,12 @@ initMe/
 ├── git/
 │   └── gitconfig             # Shared git behavior (included from ~/.gitconfig)
 ├── cursor-rules/             # Global Cursor rules → ~/.cursor/rules/
+├── .github/workflows/        # CI (shellcheck on *.sh)
+├── .shellcheckrc             # ShellCheck defaults
 ├── Brewfile                  # Homebrew formulae and casks
 ├── zshrc                     # Shell config → ~/.zshrc
 ├── p10k.zsh                  # Powerlevel10k → ~/.p10k.zsh
-├── ssh_config                # SSH client config → ~/.ssh/config
+├── ssh_config                # GitHub SSH → ~/.ssh/config
 ├── gitignore_global          # Global gitignore → core.excludesfile
 ├── mylab.cursorignore.example
 └── vscode-extensions-list.txt
@@ -77,14 +80,15 @@ initMe/
 | Infrastructure | Terraform (tfenv), Vault | Terraform (tfenv) |
 | Kubernetes | kubectl, kubectx, kubelogin, k9s, minikube | kubectl, kubectx, k9s |
 | Shell | oh-my-zsh + Powerlevel10k + plugins | oh-my-zsh + Powerlevel10k + plugins |
-| Dotfiles | `zshrc`, `p10k`, SSH, gitconfig include, global gitignore | `zshrc` symlinked |
+| Dotfiles | `zshrc`, `p10k`, SSH, gitconfig include, global gitignore | `zshrc` + SSH symlinked |
 | Cursor rules | `cursor-rules/*.mdc` → `~/.cursor/rules/` | — |
-| SSH | Generate or import + keychain | Generate or import |
+| SSH | `id_ed25519` key + keychain; `ssh_config` for GitHub | `id_ed25519` + shared `ssh_config` |
 | GitHub CLI | Install + `gh auth login` | Install + `gh auth login` |
-| macOS defaults | Finder, key repeat, Dock, screenshots | — |
+| macOS defaults | Finder, key repeat, Dock, screenshots (prompted) | — |
 | iTerm2 | Profile imported from repo | — |
 | Editors | VS Code + Cursor (casks); VS Code extensions from list | — |
 | Repo sync | launchd every 6h: ff-only `main`/`master` under `~/myLab` | cron every 6h |
+| CI | ShellCheck on push (`.github/workflows/shellcheck.yml`) | — |
 
 All steps are **idempotent** — safe to re-run if something fails partway through.
 
@@ -98,9 +102,9 @@ bash ~/myLab/initMe/sync-repos.sh --dry-run
 
 - **macOS only**: `bootstrap.sh` and `install-macos.sh` (exit on Linux)
 - **Pi / Linux only**: `bootstrap-pi.sh` (apt, cron sync; no Homebrew or macOS defaults)
-- **Both**: `install.sh`, `zshrc`, `sync-repos.sh`, `clone-mylab.sh`
+- **Both**: `install.sh`, `zshrc`, `sync-repos.sh`, `clone-mylab.sh`, `ssh_config`
 
-`zshrc` is shared; platform-specific bits use `uname` checks (e.g. `ls` colors, VS Code PATH).
+`zshrc` is shared; platform-specific bits use `uname` checks (e.g. `ls` colors, VS Code PATH). `ssh_config` uses `IgnoreUnknown UseKeychain` so macOS keychain options do not break OpenSSH on Linux/Pi.
 
 ## Idempotency
 
@@ -112,11 +116,14 @@ Re-running is intended to be safe: Homebrew bundle upgrades, oh-my-zsh skips if 
 
 On a fresh machine, bootstrap will:
 
-1. Generate or import an SSH key (`~/.ssh/id_ed25519`) and load it into the macOS keychain
-2. Run `gh auth login` for GitHub
-3. **Prompt** for git name / email / optional GPG key when `user.name` is not set (stored in `~/.gitconfig`, not in this repo)
+1. Generate or import an SSH key (`~/.ssh/id_ed25519`) and load it into the macOS keychain (Pi: keygen without keychain)
+2. Symlink `ssh_config` to `~/.ssh/config` (backs up a plain file to `~/.ssh/config.bak` first)
+3. Run `gh auth login` for GitHub
+4. **Prompt** for git name / email / optional GPG key when `user.name` is not set (stored in `~/.gitconfig`, not in this repo)
 
-Vault is installed via Homebrew for personal infra work; log in manually when you need it (`vault login`).
+`ssh_config` points GitHub at `id_ed25519` (with `id_rsa` fallback) and sets `IdentitiesOnly yes` to avoid offering every key in the agent.
+
+Vault is installed via Homebrew on macOS; log in manually when you need it (`vault login`).
 
 ## GPG commit signing (optional)
 
@@ -171,7 +178,17 @@ cd ~/myLab/initMe && bash install.sh
 
 ## Dotfiles are symlinked, not copied
 
-`zshrc`, `p10k.zsh`, `ssh_config`, and `gitignore_global` are symlinked. `git/gitconfig` is **included** from `~/.gitconfig` so your identity stays local. `cursor-rules/*.mdc` symlink to `~/.cursor/rules/`.
+`zshrc`, `p10k.zsh`, `ssh_config`, and `gitignore_global` are symlinked from this repo. `bootstrap.sh`, `bootstrap-pi.sh`, and `install.sh` all link `ssh_config` → `~/.ssh/config`; they back up an existing plain file to `~/.ssh/config.bak` before replacing it with a symlink.
+
+`git/gitconfig` is **included** from `~/.gitconfig` so your identity stays local. `cursor-rules/*.mdc` symlink to `~/.cursor/rules/`.
+
+## Development
+
+Shell scripts are checked on push with [ShellCheck](https://www.shellcheck.net/) (see `.github/workflows/shellcheck.yml` and `.shellcheckrc`). Local check:
+
+```bash
+shellcheck *.sh
+```
 
 ## Keeping packages up to date
 
