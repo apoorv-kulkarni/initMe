@@ -311,6 +311,12 @@ echo "  Symlinked: ~/.ssh/config -> $REPO_DIR/ssh_config"
 run git config --global core.excludesfile "$HOME/.gitignore_global"
 run ln -sf "$REPO_DIR/gitignore_global" "$HOME/.gitignore_global"
 echo "  Symlinked: ~/.gitignore_global -> $REPO_DIR/gitignore_global"
+if [[ -f "$REPO_DIR/git/gitconfig" ]]; then
+    if ! git config --global --get-all include.path 2>/dev/null | grep -qF "$REPO_DIR/git/gitconfig"; then
+        run git config --global --add include.path "$REPO_DIR/git/gitconfig"
+    fi
+    echo "  Included: git/gitconfig -> ~/.gitconfig (include.path)"
+fi
 
 # Set zsh as default shell if it isn't already
 if [[ "$SHELL" != "$(which zsh)" ]]; then

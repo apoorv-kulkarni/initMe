@@ -6,48 +6,60 @@ Repos live under **`~/myLab/`** (each project is usually its own git repo). init
 
 Targets: **macOS** (primary) and **Raspberry Pi OS** (Debian).
 
-## Install (macOS)
+## Quick Start
 
-Paste in Terminal on a new Mac ([same pattern as Homebrew](https://brew.sh)):
+### On a new Mac (full setup from scratch)
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apoorv-kulkarni/initMe/HEAD/install-macos.sh)"
 ```
 
-Preview what bootstrap would do:
+Then clone the rest of your repos:
+
+```bash
+cd ~/myLab/initMe
+bash clone-mylab.sh
+exec zsh
+```
+
+Preview bootstrap without applying changes:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apoorv-kulkarni/initMe/HEAD/install-macos.sh)" -- --dry-run
 ```
 
-Install under a custom parent directory (creates `<dir>/initMe`):
+### On a machine that already has tools installed
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apoorv-kulkarni/initMe/HEAD/install-macos.sh)" -- "$HOME/code"
-```
-
-No `git` required for the first run; `curl` ships with macOS. The installer downloads initMe, then runs `bootstrap.sh` (Homebrew, git, dotfiles, and the rest).
-
-After `gh auth login`, turn the tarball install into a normal clone:
-
-```bash
+git clone git@github.com:apoorv-kulkarni/initMe.git ~/myLab/initMe
 cd ~/myLab/initMe
-git init
-git remote add origin git@github.com:apoorv-kulkarni/initMe.git
-git fetch origin
-git reset --hard FETCH_HEAD
-git branch -M master
+./install.sh      # symlinks configs only
+exec zsh
 ```
 
-### After bootstrap (recommended)
+Run `bash bootstrap.sh` (macOS) or `bash bootstrap-pi.sh` (Pi) if you still need Homebrew packages, launchd sync, etc.
 
-```bash
-cd ~/myLab/initMe
-bash clone-mylab.sh    # clone your other GitHub repos into ~/myLab
-bash install.sh        # refresh symlinks if you pulled changes (safe to re-run)
+## Structure
+
 ```
-
-Open **`~/myLab`** in Cursor. Optional: copy `mylab.cursorignore.example` to `~/myLab/.cursorignore` so sibling repos' `node_modules` and build dirs stay out of AI context.
+initMe/
+├── install-macos.sh          # curl | bash entry (Homebrew-style)
+├── install.sh                # Symlink dotfiles into ~
+├── bootstrap.sh              # Full macOS setup (brew bundle, launchd, …)
+├── bootstrap-pi.sh           # Raspberry Pi setup
+├── clone-mylab.sh            # Clone personal repos into ~/myLab
+├── sync-repos.sh             # Fast-forward main/master only under ~/myLab
+├── git/
+│   └── gitconfig             # Shared git behavior (included from ~/.gitconfig)
+├── cursor-rules/             # Global Cursor rules → ~/.cursor/rules/
+├── Brewfile                  # Homebrew formulae and casks
+├── zshrc                     # Shell config → ~/.zshrc
+├── p10k.zsh                  # Powerlevel10k → ~/.p10k.zsh
+├── ssh_config                # SSH client config → ~/.ssh/config
+├── gitignore_global          # Global gitignore → core.excludesfile
+├── mylab.cursorignore.example
+└── vscode-extensions-list.txt
+```
 
 ## What it does
 
@@ -58,8 +70,8 @@ Open **`~/myLab`** in Cursor. Optional: copy `mylab.cursorignore.example` to `~/
 | Infrastructure | Terraform (tfenv), Vault | Terraform (tfenv) |
 | Kubernetes | kubectl, kubectx, kubelogin, k9s, minikube | kubectl, kubectx, k9s |
 | Shell | oh-my-zsh + Powerlevel10k + plugins | oh-my-zsh + Powerlevel10k + plugins |
-| Dotfiles | `zshrc`, `p10k`, SSH, global gitignore symlinked | `zshrc` symlinked |
-| Cursor rules | `cursor-rules/*.mdc` symlinked to `~/.cursor/rules/` | — |
+| Dotfiles | `zshrc`, `p10k`, SSH, gitconfig include, global gitignore | `zshrc` symlinked |
+| Cursor rules | `cursor-rules/*.mdc` → `~/.cursor/rules/` | — |
 | SSH | Generate or import + keychain | Generate or import |
 | GitHub CLI | Install + `gh auth login` | Install + `gh auth login` |
 | macOS defaults | Finder, key repeat, Dock, screenshots | — |
@@ -69,22 +81,66 @@ Open **`~/myLab`** in Cursor. Optional: copy `mylab.cursorignore.example` to `~/
 
 All steps are **idempotent** — safe to re-run if something fails partway through.
 
-`sync-repos.sh` never touches feature branches. It only fast-forwards the default branch when origin is ahead and a clean ff-merge is possible (or updates the ref when that branch is not checked out).
-
-Preview sync:
+`sync-repos.sh` never touches feature branches. Preview:
 
 ```bash
 bash ~/myLab/initMe/sync-repos.sh --dry-run
 ```
 
-## Other ways to install
+## Platform handling
 
-### git clone (when git / SSH already work)
+- **macOS**: Homebrew (`Brewfile`), iTerm2 profile, macOS defaults, VS Code extensions
+- **Raspberry Pi / Linux**: `bootstrap-pi.sh`, apt-based tools, cron instead of launchd
+
+`zshrc` is shared; platform-specific bits use `uname` checks (e.g. `ls` colors, VS Code PATH).
+
+## Keys & secrets
+
+**Not in this repo.** `.gitignore` and `gitignore_global` block keys, `.env`, and common credential files.
+
+On a fresh machine, bootstrap will:
+
+1. Generate or import an SSH key and load it into the macOS keychain
+2. Run `gh auth login` for GitHub
+3. Prompt for git name / email (stored in `~/.gitconfig`, not in the repo)
+
+Vault is installed via Homebrew for personal infra work; log in manually when you need it (`vault login`).
+
+## GPG commit signing (optional)
+
+Bootstrap prompts for a signing key ID on first run. To enable later:
 
 ```bash
-git clone git@github.com:apoorv-kulkarni/initMe.git ~/myLab/initMe
+git config --global user.signingkey <KEY_ID>
+git config --global commit.gpgsign true
+git config --global gpg.program gpg   # or /opt/homebrew/bin/gpg on Apple Silicon
+```
+
+## Cursor AI config
+
+`cursor-rules/*.mdc` are symlinked to `~/.cursor/rules/` and cover interaction style, coding standards, `~/myLab` layout, debugging habits, and PR cleanup. Open **`~/myLab`** as the workspace; optionally copy `mylab.cursorignore.example` to `~/myLab/.cursorignore`.
+
+## Other install paths
+
+### curl installer — custom parent directory
+
+Creates `<dir>/initMe`:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apoorv-kulkarni/initMe/HEAD/install-macos.sh)" -- "$HOME/code"
+```
+
+### Tarball install → normal git clone
+
+After `gh auth login`:
+
+```bash
 cd ~/myLab/initMe
-bash bootstrap.sh
+git init
+git remote add origin git@github.com:apoorv-kulkarni/initMe.git
+git fetch origin
+git reset --hard FETCH_HEAD
+git branch -M master
 ```
 
 ### Raspberry Pi
@@ -95,62 +151,20 @@ cd ~/myLab/initMe
 bash bootstrap-pi.sh
 ```
 
-> Bootstrap scripts prompt for git name/email/signing key — no manual editing required.
-
-### Clone all `~/myLab` repos, then bootstrap
-
-```bash
-git clone git@github.com:apoorv-kulkarni/initMe.git ~/myLab/initMe
-cd ~/myLab/initMe
-bash clone-mylab.sh
-bash bootstrap.sh
-```
-
-### Already set up — refresh symlinks after `git pull`
-
-`install.sh` re-links dotfiles, Cursor rules, and helper scripts (`clone-mylab`, `sync-repos`) into `~/.local/bin`:
+### Refresh symlinks after `git pull`
 
 ```bash
 cd ~/myLab/initMe && bash install.sh
 ```
 
-Preview bootstrap without changes:
-
-```bash
-bash bootstrap.sh --dry-run
-```
-
-## Files
-
-| File / directory | Purpose |
-| --- | --- |
-| `install-macos.sh` | Remote installer: Homebrew-style `curl \| bash` entry |
-| `bootstrap.sh` | macOS full setup |
-| `bootstrap-pi.sh` | Raspberry Pi setup |
-| `install.sh` | Symlink dotfiles, Cursor rules, and helper scripts |
-| `clone-mylab.sh` | Clone personal GitHub repos into `~/myLab` |
-| `sync-repos.sh` | Fast-forward default branches for repos under `~/myLab` |
-| `cursor-rules/` | Global Cursor AI rules (symlinked to `~/.cursor/rules/`) |
-| `mylab.cursorignore.example` | Template for `~/myLab/.cursorignore` |
-| `.cursorignore` | Keeps large initMe blobs out of Cursor context |
-| `Brewfile` | Homebrew formulae and cask apps |
-| `zshrc` | Shell config — symlinked to `~/.zshrc` |
-| `p10k.zsh` | Powerlevel10k prompt — symlinked to `~/.p10k.zsh` |
-| `ssh_config` | SSH client config — symlinked to `~/.ssh/config` |
-| `gitignore_global` | Global gitignore — `core.excludesfile` |
-| `iterm2_profile.plist` | iTerm2 preferences — imported on bootstrap |
-| `vscode-extensions-list.txt` | VS Code extensions (`code --install-extension`) |
-
 ## Dotfiles are symlinked, not copied
 
-`zshrc`, `p10k.zsh`, `ssh_config`, `gitignore_global`, and `cursor-rules/*.mdc` are symlinked from this repo. Edits on the live files stay in version control — no drift, no manual syncing.
+`zshrc`, `p10k.zsh`, `ssh_config`, and `gitignore_global` are symlinked. `git/gitconfig` is **included** from `~/.gitconfig` so your identity stays local. `cursor-rules/*.mdc` symlink to `~/.cursor/rules/`.
 
 ## Keeping packages up to date
 
-Regenerate `Brewfile` from whatever is currently installed:
-
 ```bash
-brew bundle dump --force
+brew bundle dump --force   # regenerate Brewfile from installed packages
 ```
 
 ## Logs

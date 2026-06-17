@@ -1,0 +1,27 @@
+# Shared git behavior (included from ~/.gitconfig via install.sh / bootstrap).
+# Identity (user.name, user.email, signing) lives in ~/.gitconfig only — set by bootstrap.
+
+[core]
+    editor = vim
+    autocrlf = input
+
+[init]
+    defaultBranch = main
+
+[fetch]
+    prune = true
+
+[pull]
+    ff = only
+
+[push]
+    default = simple
+
+[rebase]
+    autoStash = true
+
+[diff]
+    colorMoved = default
+
+[merge]
+    conflictstyle = diff3
