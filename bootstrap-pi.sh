@@ -164,12 +164,12 @@ if ! command -v kubectl &>/dev/null; then
         curl -fsSL "https://dl.k8s.io/release/${K8S_VERSION}/bin/linux/${K8S_ARCH}/kubectl" -o /tmp/kubectl
         sudo install -m 0755 /tmp/kubectl /usr/local/bin/kubectl
         rm /tmp/kubectl
-        echo "  Installed: $(kubectl version --client --short 2>/dev/null || kubectl version --client)"
+        echo "  Installed: $(kubectl version --client 2>/dev/null | head -1 || echo kubectl)"
     else
         echo "  [dry-run] would install kubectl ${K8S_VERSION} for ${K8S_ARCH}"
     fi
 else
-    echo "  Already installed: $(kubectl version --client --short 2>/dev/null || true)"
+    echo "  Already installed: $(kubectl version --client 2>/dev/null | head -1 || echo kubectl)"
 fi
 
 # -----------------------------------------------------------------------------

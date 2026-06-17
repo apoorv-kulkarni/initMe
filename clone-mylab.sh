@@ -55,9 +55,8 @@ clone_if_missing "https://github.com/rdeepak2002/reddit-place-script-2022.git"
 # clone_if_missing "git@github.com:apoorv-kulkarni/python_practice.git"
 # clone_if_missing "git@github.com:apoorv-kulkarni/GoLangExploration.git"
 
-# --- Separate learning repo (not under ~/myLab; lives at ~/Personal_Practice) ---
-# mkdir -p "$HOME/Personal_Practice"
-# git clone git@github.com:apoorv-kulkarni/<repo>.git "$HOME/Personal_Practice/<repo>"
+# --- Separate learning repo (not under ~/myLab; lives at ~/Personal_Practice/) ---
+# mkdir -p "$HOME/Personal_Practice" && git clone <url> "$HOME/Personal_Practice/<name>"
 
 echo ""
 echo -e "${GREEN}Done.${NC} Workspace is at $MYLAB_DIR"
