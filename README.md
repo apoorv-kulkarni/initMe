@@ -62,7 +62,7 @@ bash bootstrap.sh --dry-run
 | `gitignore_global` | Global gitignore — wired via `core.excludesfile` |
 | `iterm2_profile.plist` | iTerm2 preferences — imported on bootstrap |
 | `vscode-extensions-list.txt` | VS Code extensions to install |
-| `sync-repos.sh` | Fetches updates for all git repos under `~/myLab` |
+| `sync-repos.sh` | Fast-forwards default branches (main/master) for all git repos under `~/myLab` |
 
 ## Dotfiles are symlinked, not copied
 

@@ -77,7 +77,7 @@ like `PR ready to verify`.
 - This only fires while the chat is active. If the user closes the
   chat, the timer dies with it. No recovery on next session unless
   the user asks.
-- The `~/myLab/initMe/sync-repos.sh` launchd job (every 6h) already runs
-  `git fetch --all --prune` across all repos under `~/myLab/`. This rule
-  adds checkout of the merged base branch and deletion of gone local branches
-  after a specific PR merges.
+- The `~/myLab/initMe/sync-repos.sh` launchd job (every 6h) already fast-forwards
+  default branches across all repos under `~/myLab/` (fetch + ff-only merge or
+  update-ref; feature branches untouched). This rule adds checkout of the merged
+  base branch and deletion of gone local branches after a specific PR merges.
