@@ -4,9 +4,16 @@ Personal Mac bootstrap: Homebrew, shell, dotfiles, Cursor rules, infra tools, an
 
 Repos live under **`~/myLab/`** (each project is usually its own git repo). initMe itself is `~/myLab/initMe`.
 
-Targets: **macOS** (primary) and **Raspberry Pi OS** (Debian).
+Targets: **macOS** (`bootstrap.sh`) and **Raspberry Pi OS** (`bootstrap-pi.sh`). There is no single cross-platform bootstrap; each script refuses the wrong OS.
 
-## Quick Start
+## Review before running
+
+`bootstrap.sh` installs packages, changes macOS system defaults (with a prompt), registers a launchd job, and may generate SSH keys. Use `--dry-run` to preview steps without applying them:
+
+```bash
+bash bootstrap.sh --dry-run
+```
+
 
 ### On a new Mac (full setup from scratch)
 
@@ -89,10 +96,15 @@ bash ~/myLab/initMe/sync-repos.sh --dry-run
 
 ## Platform handling
 
-- **macOS**: Homebrew (`Brewfile`), iTerm2 profile, macOS defaults, VS Code extensions
-- **Raspberry Pi / Linux**: `bootstrap-pi.sh`, apt-based tools, cron instead of launchd
+- **macOS only**: `bootstrap.sh` and `install-macos.sh` (exit on Linux)
+- **Pi / Linux only**: `bootstrap-pi.sh` (apt, cron sync; no Homebrew or macOS defaults)
+- **Both**: `install.sh`, `zshrc`, `sync-repos.sh`, `clone-mylab.sh`
 
 `zshrc` is shared; platform-specific bits use `uname` checks (e.g. `ls` colors, VS Code PATH).
+
+## Idempotency
+
+Re-running is intended to be safe: Homebrew bundle upgrades, oh-my-zsh skips if present, SSH keygen only when no key exists, launchd plist skipped if already installed, macOS defaults gated by a marker file (and an interactive prompt on first run). Git **name/email/GPG** are prompted only when `user.name` is unset.
 
 ## Keys & secrets
 
@@ -100,9 +112,9 @@ bash ~/myLab/initMe/sync-repos.sh --dry-run
 
 On a fresh machine, bootstrap will:
 
-1. Generate or import an SSH key and load it into the macOS keychain
+1. Generate or import an SSH key (`~/.ssh/id_ed25519`) and load it into the macOS keychain
 2. Run `gh auth login` for GitHub
-3. Prompt for git name / email (stored in `~/.gitconfig`, not in the repo)
+3. **Prompt** for git name / email / optional GPG key when `user.name` is not set (stored in `~/.gitconfig`, not in this repo)
 
 Vault is installed via Homebrew for personal infra work; log in manually when you need it (`vault login`).
 

@@ -38,7 +38,7 @@ link_file "$REPO_DIR/p10k.zsh" "$HOME/.p10k.zsh"
 link_file "$REPO_DIR/gitignore_global" "$HOME/.gitignore_global"
 git config --global core.excludesfile "$HOME/.gitignore_global"
 GITCONFIG_INCLUDE="$REPO_DIR/git/gitconfig"
-if [[ -f "$GITCONFIG_INCLUDE ]]; then
+if [[ -f "$GITCONFIG_INCLUDE" ]]; then
   if ! git config --global --get-all include.path 2>/dev/null | grep -qF "$GITCONFIG_INCLUDE"; then
     git config --global --add include.path "$GITCONFIG_INCLUDE"
   fi

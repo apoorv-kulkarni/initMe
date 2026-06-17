@@ -1,4 +1,7 @@
+# Matches keys created by bootstrap.sh (ed25519). id_rsa is a fallback for older keys.
 Host github.com
   AddKeysToAgent yes
   UseKeychain yes
-  IdentityFile ~/.ssh/gigithub_2024
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/id_ed25519
+  IdentityFile ~/.ssh/id_rsa
