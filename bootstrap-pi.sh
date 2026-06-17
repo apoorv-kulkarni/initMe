@@ -312,8 +312,9 @@ run ln -sf "$REPO_DIR/p10k.zsh" "$HOME/.p10k.zsh"
 echo "  Symlinked: ~/.p10k.zsh -> $REPO_DIR/p10k.zsh"
 run mkdir -p "$HOME/.ssh" && run chmod 700 "$HOME/.ssh"
 if [[ -f "$HOME/.ssh/config" && ! -L "$HOME/.ssh/config" ]]; then
-    run cp "$HOME/.ssh/config" "$HOME/.ssh/config.bak"
-    echo "  Backed up existing ~/.ssh/config to ~/.ssh/config.bak"
+    SSH_CONFIG_BACKUP="$HOME/.ssh/config.bak.$(date +%s)"
+    run cp "$HOME/.ssh/config" "$SSH_CONFIG_BACKUP"
+    echo "  Backed up existing ~/.ssh/config to $SSH_CONFIG_BACKUP"
 fi
 run ln -sf "$REPO_DIR/ssh_config" "$HOME/.ssh/config" && run chmod 600 "$HOME/.ssh/config"
 echo "  Symlinked: ~/.ssh/config -> $REPO_DIR/ssh_config"
