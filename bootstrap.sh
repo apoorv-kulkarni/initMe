@@ -340,8 +340,11 @@ fi
 # -----------------------------------------------------------------------------
 step "Cursor rules"
 run mkdir -p "$HOME/.cursor/rules"
-run ln -sf "$REPO_DIR/cursor-rules/personal.mdc" "$HOME/.cursor/rules/personal.mdc"
-echo "  Symlinked: ~/.cursor/rules/personal.mdc -> $REPO_DIR/cursor-rules/personal.mdc"
+for rule in "$REPO_DIR/cursor-rules"/*.mdc; do
+    name="$(basename "$rule")"
+    run ln -sf "$rule" "$HOME/.cursor/rules/$name"
+    echo "  Symlinked: ~/.cursor/rules/$name"
+done
 
 # -----------------------------------------------------------------------------
 echo ""
