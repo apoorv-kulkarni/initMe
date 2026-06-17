@@ -295,13 +295,13 @@
   # For example, given these settings:
   #
   #   typeset -g POWERLEVEL9K_DIR_CLASSES=(
-  #     '~/work(|/*)'  WORK     ''
+  #     '~/myLab(|/*)'  MYLAB    ''
   #     '~(|/*)'       HOME     ''
   #     '*'            DEFAULT  '')
   #
-  # Whenever the current directory is ~/work or a subdirectory of ~/work, it gets styled with one
-  # of the following classes depending on its writability and existence: WORK, WORK_NOT_WRITABLE or
-  # WORK_NON_EXISTENT.
+  # Whenever the current directory is ~/myLab or a subdirectory of ~/myLab, it gets styled with one
+  # of the following classes depending on its writability and existence: MYLAB, MYLAB_NOT_WRITABLE or
+  # MYLAB_NON_EXISTENT.
   #
   # Simply assigning classes to directories doesn't have any visible effects. It merely gives you an
   # option to define custom colors and icons for different directory classes.
