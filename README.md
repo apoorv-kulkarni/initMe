@@ -117,7 +117,7 @@ Re-running is intended to be safe: Homebrew bundle upgrades, oh-my-zsh skips if 
 On a fresh machine, bootstrap will:
 
 1. Generate or import an SSH key (`~/.ssh/id_ed25519`) and load it into the macOS keychain (Pi: keygen without keychain)
-2. Symlink `ssh_config` to `~/.ssh/config` (backs up a plain file to `~/.ssh/config.bak` first)
+2. Symlink `ssh_config` to `~/.ssh/config` (backs up a plain file to `~/.ssh/config.bak.<timestamp>` first)
 3. Run `gh auth login` for GitHub
 4. **Prompt** for git name / email / optional GPG key when `user.name` is not set (stored in `~/.gitconfig`, not in this repo)
 
@@ -178,7 +178,7 @@ cd ~/myLab/initMe && bash install.sh
 
 ## Dotfiles are symlinked, not copied
 
-`zshrc`, `p10k.zsh`, `ssh_config`, and `gitignore_global` are symlinked from this repo. `bootstrap.sh`, `bootstrap-pi.sh`, and `install.sh` all link `ssh_config` → `~/.ssh/config`; they back up an existing plain file to `~/.ssh/config.bak` before replacing it with a symlink.
+`zshrc`, `p10k.zsh`, `ssh_config`, and `gitignore_global` are symlinked from this repo. `bootstrap.sh`, `bootstrap-pi.sh`, and `install.sh` all link `ssh_config` → `~/.ssh/config`; they back up an existing plain file to `~/.ssh/config.bak.<timestamp>` before replacing it with a symlink.
 
 `git/gitconfig` is **included** from `~/.gitconfig` so your identity stays local. `cursor-rules/*.mdc` symlink to `~/.cursor/rules/`.
 

@@ -48,8 +48,17 @@ fi
 # --- SSH ---
 mkdir -p "$HOME/.ssh"
 chmod 700 "$HOME/.ssh"
-link_file "$REPO_DIR/ssh_config" "$HOME/.ssh/config"
-chmod 600 "$HOME/.ssh/config"
+SSH_CONFIG="$HOME/.ssh/config"
+if [[ -L "$SSH_CONFIG" ]]; then
+  rm "$SSH_CONFIG"
+elif [[ -f "$SSH_CONFIG" ]]; then
+  SSH_CONFIG_BACKUP="${SSH_CONFIG}.bak.$(date +%s)"
+  warn "Backing up existing $SSH_CONFIG -> $SSH_CONFIG_BACKUP"
+  mv "$SSH_CONFIG" "$SSH_CONFIG_BACKUP"
+fi
+ln -sf "$REPO_DIR/ssh_config" "$SSH_CONFIG"
+info "Linked $SSH_CONFIG -> $REPO_DIR/ssh_config"
+chmod 600 "$SSH_CONFIG"
 
 # --- Cursor rules ---
 mkdir -p "$HOME/.cursor/rules"
