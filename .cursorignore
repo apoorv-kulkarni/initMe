@@ -1,0 +1,5 @@
+# Cursor indexing / AI context exclusions (not the same as .gitignore).
+# initMe is mostly small config; skip large generated blobs rarely edited here.
+
+p10k.zsh
+iterm2_profile.plist

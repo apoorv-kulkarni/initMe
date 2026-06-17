@@ -1,3 +1,7 @@
+# Global gitignore — wired via `git config --global core.excludesfile`.
+# Universal junk and secrets for every repo on this machine.
+# Repo-specific rules stay in each project's .gitignore.
+
 # macOS
 .DS_Store
 .AppleDouble
@@ -7,17 +11,33 @@
 .Trashes
 .fseventsd
 
+# Windows
+Thumbs.db
+Desktop.ini
+
 # Editors
 *.swp
 *.swo
 *~
 .idea/
 *.iml
+.vscode/
 
 # Environment & secrets
 .env
+.env.*
 .env.local
 .env.*.local
+*.key
+*.pem
+*.p12
+id_rsa*
+id_ed25519*
+.netrc
+.credentials
+
+# Dotfile installer backups (install.sh, etc.)
+*.bak
 
 # Python
 *.pyc
@@ -27,9 +47,26 @@ __pycache__/
 *.egg-info/
 dist/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Node
 node_modules/
+.npm/
 
 # Logs
 *.log
+
+# Terraform / IaC
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Java / Maven
+target/
+*.class
+
+# Build output (common across stacks)
+build/
+dist/

@@ -1,2 +1,17 @@
-.DS_Store
+# Never commit secrets
+*.key
+*.pem
+id_rsa*
+id_ed25519
+*.pub
+.netrc
+.env
+.env.*
+
+# Archives / backups (install.sh backs up replaced dotfiles)
+*.zip
 *.bak
+
+# OS junk
+.DS_Store
+Thumbs.db

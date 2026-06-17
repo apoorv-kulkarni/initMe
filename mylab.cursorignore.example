@@ -1,0 +1,14 @@
+# Optional: copy to ~/myLab/.cursorignore when you open ~/myLab as the Cursor workspace.
+# Keeps sibling repos' heavy dirs out of AI context (indexing still follows each repo's .gitignore).
+
+**/.git/
+**/node_modules/
+**/vendor/
+**/__pycache__/
+**/.venv/
+**/target/
+**/build/
+**/dist/
+**/.bundle/
+**/_site/
+*.zip

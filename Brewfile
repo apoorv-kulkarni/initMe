@@ -10,7 +10,7 @@ brew "gnupg"
 brew "node"
 brew "go"
 brew "pyenv"
-brew "dotnet@9"
+# brew "dotnet@9"   # uncomment when you need .NET
 
 # ── Infrastructure & secrets ──────────────────────────────────────────────────
 brew "tfenv"
@@ -38,6 +38,7 @@ brew "zsh-syntax-highlighting"
 cask "firefox"
 cask "google-chrome"
 cask "iterm2"
+cask "cursor"
 cask "slack"
 cask "zoom"
 cask "spotify"
