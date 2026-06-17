@@ -6,8 +6,8 @@ ms-python.debugpy
 ms-python.vscode-python-envs
 ms-vscode.cpptools
 ms-vscode.makefile-tools
-ms-dotnettools.csharp
-ms-dotnettools.vscode-dotnet-runtime
+# ms-dotnettools.csharp
+# ms-dotnettools.vscode-dotnet-runtime
 ms-vscode.powershell
 redhat.vscode-yaml
 

@@ -48,7 +48,7 @@ export GOBIN="$GOPATH/bin"
 export PATH="$PATH:$GOBIN"
 
 # -----------------------------------------------------------------------------
-# .NET (macOS / Homebrew only)
+# .NET (macOS / Homebrew only) — only if dotnet@9 is installed via Brewfile
 # -----------------------------------------------------------------------------
 _DOTNET_ROOT="${HOMEBREW_PREFIX:-/usr/local}/opt/dotnet@9/libexec"
 if [[ -d "$_DOTNET_ROOT" ]]; then
