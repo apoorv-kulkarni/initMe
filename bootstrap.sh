@@ -10,6 +10,11 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STEP=0
 TOTAL=17
 
+if [[ "$(uname -s)" != "Darwin" ]]; then
+    echo "bootstrap.sh is for macOS only. On Linux / Raspberry Pi, run: bash bootstrap-pi.sh"
+    exit 1
+fi
+
 DRY_RUN=false
 [[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true && echo "DRY RUN — previewing steps, no changes will be made"
 
@@ -216,6 +221,12 @@ step "macOS defaults"
 DEFAULTS_MARKER="$HOME/.config/initme/defaults_applied"
 if [[ ! -f "$DEFAULTS_MARKER" ]]; then
     if ! $DRY_RUN; then
+        echo "  Applies Finder, keyboard, Dock, and screenshot settings."
+        echo "  Review bootstrap.sh (macOS defaults section) before continuing on a shared machine."
+        read -rp "  Apply macOS defaults? [y/N] " apply_defaults
+        if [[ ! "$apply_defaults" =~ ^[yY]$ ]]; then
+            echo "  Skipped."
+        else
         # Finder: show file extensions and hidden files
         defaults write NSGlobalDomain AppleShowAllExtensions -bool true
         defaults write com.apple.finder AppleShowAllFiles -bool true
@@ -241,6 +252,7 @@ if [[ ! -f "$DEFAULTS_MARKER" ]]; then
         mkdir -p "$(dirname "$DEFAULTS_MARKER")"
         touch "$DEFAULTS_MARKER"
         echo "  Applied."
+        fi
     else
         echo "  [dry-run] would apply macOS defaults (Finder, key repeat, Dock, screenshots)"
     fi

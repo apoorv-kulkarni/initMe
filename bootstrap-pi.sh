@@ -11,6 +11,11 @@ ARCH="$(dpkg --print-architecture 2>/dev/null || uname -m)"
 STEP=0
 TOTAL=13
 
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    echo "bootstrap-pi.sh is for Linux / Raspberry Pi. On macOS, run: bash bootstrap.sh"
+    exit 1
+fi
+
 DRY_RUN=false
 [[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true && echo "DRY RUN — previewing steps, no changes will be made"
 
