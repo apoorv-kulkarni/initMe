@@ -1,6 +1,6 @@
 ---
-description: After helping create a PR, check N min later whether it merged and clean up local branches
-alwaysApply: true
+description: Post-PR cleanup workflow. Read this AFTER you help create a PR (gh pr create, git push of a new branch). It schedules a delayed check to verify the PR merged and prune local branches. Not needed otherwise.
+alwaysApply: false
 ---
 
 # Post-PR cleanup
@@ -19,10 +19,10 @@ Heuristic suggestions (apply silently; mention only if the user asks):
 
 | Situation | Suggested delay |
 |---|---|
-| `gh pr merge --auto` enabled + small diff + green CI history | 5–10 min |
+| `gh pr merge --auto` enabled + small diff + green CI history | 5-10 min |
 | Solo-owner / personal repo, no reviewers | 5 min |
-| Roblox infra repo with 1–2 reviewers (normal case) | 30 min (default) |
-| Repo with slow CI (prophase e2e, eecd e2e) | 45–60 min |
+| Repo with 1-2 reviewers (normal case) | 30 min (default) |
+| Repo with slow CI (long e2e suites) | 45-60 min |
 | Cross-team / many-reviewers PR | 90 min, or skip auto-check entirely |
 
 If unsure, ask the user once at PR-creation time: "check in X min?"
@@ -60,17 +60,14 @@ like `PR ready to verify`.
 
    ```bash
    git checkout <baseRefName>   # NOT hardcoded main/master - release branches matter
-   git pull --ff-only            # the default-branch sync cron also does this hourly; safe to repeat
-   gprune -f                     # ~/work/dotfiles/zsh/aliases.sh: fetch --prune + delete [gone] branches
+   git pull --ff-only
+   git fetch --prune
+   gone=$(git branch -vv | awk '/: gone\]/ {print $1}')
+   [[ -n "$gone" ]] && echo "$gone" | xargs git branch -D
    ```
 
-4. If `gprune` isn't on PATH (non-interactive shells don't source
-   `aliases.sh`), fall back to the raw one-liner:
-
-   ```bash
-   git fetch --prune && \
-     git branch -vv | awk '/: gone\]/ {print $1}' | xargs -r git branch -D
-   ```
+4. The portable one-liner above replaces workplace `gprune`; there is no
+   `gprune` alias in `~/myLab/initMe/zshrc`.
 
 ## Discipline
 
@@ -80,6 +77,7 @@ like `PR ready to verify`.
 - This only fires while the chat is active. If the user closes the
   chat, the timer dies with it. No recovery on next session unless
   the user asks.
-- The hourly `~/bin/sync-default-branches` launchd job already handles
-  fast-forward of default branches across all `~/work/` repos. This
-  rule adds the per-PR-merge prune step the cron doesn't do.
+- The `~/myLab/initMe/sync-repos.sh` launchd job (every 6h) already runs
+  `git fetch --all --prune` across all repos under `~/myLab/`. This rule
+  adds checkout of the merged base branch and deletion of gone local branches
+  after a specific PR merges.
