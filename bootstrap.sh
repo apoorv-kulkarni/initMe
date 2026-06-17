@@ -16,7 +16,7 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
 fi
 
 DRY_RUN=false
-[[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true && echo "DRY RUN — previewing steps, no changes will be made"
+[[ "${1:-}" == "--dry-run" ]] && DRY_RUN=true && echo "DRY RUN — previews file/system mutations only (may still adjust this shell's PATH to detect brew/pyenv)."
 
 run() {
     if $DRY_RUN; then
@@ -62,7 +62,11 @@ if ! command -v brew &>/dev/null; then
         echo "  [dry-run] would install Homebrew"
     fi
 fi
-eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null)" || eval "$(/usr/local/bin/brew shellenv 2>/dev/null)" || true
+if ! $DRY_RUN; then
+    eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null)" || eval "$(/usr/local/bin/brew shellenv 2>/dev/null)" || true
+else
+    echo "  [dry-run] skipping brew shellenv"
+fi
 echo "  Ready at: $(brew --prefix 2>/dev/null || echo '(brew not yet installed)')"
 
 # -----------------------------------------------------------------------------
@@ -86,17 +90,21 @@ $DRY_RUN || echo "  $(terraform version | head -1)"
 # 5. Python (via pyenv)
 # -----------------------------------------------------------------------------
 step "Python"
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-if [[ -z "$(pyenv versions --bare 2>/dev/null)" ]]; then
-    echo "  Installing latest stable Python..."
-    LATEST_PYTHON=$(pyenv install --list | grep -E '^\s+[0-9]+\.[0-9]+\.[0-9]+$' | grep -v 'dev\|rc\|alpha\|beta' | tr -d ' ' | sort -V | tail -1)
-    run pyenv install "$LATEST_PYTHON"
-    run pyenv global "$LATEST_PYTHON"
-    echo "  Python $LATEST_PYTHON set as global"
+if ! $DRY_RUN; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+    if [[ -z "$(pyenv versions --bare 2>/dev/null)" ]]; then
+        echo "  Installing latest stable Python..."
+        LATEST_PYTHON=$(pyenv install --list | grep -E '^\s+[0-9]+\.[0-9]+\.[0-9]+$' | grep -v 'dev\|rc\|alpha\|beta' | tr -d ' ' | sort -V | tail -1)
+        run pyenv install "$LATEST_PYTHON"
+        run pyenv global "$LATEST_PYTHON"
+        echo "  Python $LATEST_PYTHON set as global"
+    else
+        echo "  $(python3 --version) (managed by pyenv)"
+    fi
 else
-    echo "  $(python3 --version) (managed by pyenv)"
+    echo "  [dry-run] would configure pyenv and install Python if missing"
 fi
 
 # -----------------------------------------------------------------------------
@@ -240,7 +248,8 @@ if [[ ! -f "$DEFAULTS_MARKER" ]]; then
         defaults write NSGlobalDomain KeyRepeat -int 2
         defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
-        # Disable the "Are you sure you want to open this application?" dialog
+        # Security tradeoff (deliberate): skip Gatekeeper quarantine prompt for downloaded apps.
+        # Re-enable with: defaults write com.apple.LaunchServices LSQuarantine -bool true
         defaults write com.apple.LaunchServices LSQuarantine -bool false
 
         # Save screenshots to ~/Desktop/Screenshots

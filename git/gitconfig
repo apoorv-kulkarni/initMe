@@ -6,6 +6,7 @@
     autocrlf = input
 
 [init]
+    # New repos default to main; initMe itself uses master — sync-repos.sh handles both.
     defaultBranch = main
 
 [fetch]

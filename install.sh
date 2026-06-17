@@ -67,15 +67,12 @@ for rule in "$REPO_DIR/cursor-rules"/*.mdc; do
   link_file "$rule" "$HOME/.cursor/rules/$(basename "$rule")"
 done
 
-# --- Personal scripts (clone-mylab, sync-repos, etc.) ---
+# --- Personal scripts on PATH (explicit list) ---
 mkdir -p "$HOME/.local/bin"
-for script in "$REPO_DIR"/*.sh; do
+PATH_SCRIPTS=(clone-mylab.sh sync-repos.sh)
+for name in "${PATH_SCRIPTS[@]}"; do
+  script="$REPO_DIR/$name"
   [[ -f "$script" ]] || continue
-  name="$(basename "$script")"
-  # bootstrap scripts stay repo-local; install helpers into PATH
-  case "$name" in
-    bootstrap.sh|bootstrap-pi.sh|install.sh|install-macos.sh) continue ;;
-  esac
   link_file "$script" "$HOME/.local/bin/$name"
   chmod +x "$HOME/.local/bin/$name"
 done
