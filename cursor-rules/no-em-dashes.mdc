@@ -7,7 +7,7 @@ alwaysApply: true
 
 Do not use em dashes (`—`, U+2014) in any output. This includes assistant
 messages, code comments, docs, commit messages, PR descriptions, generated
-prose, drafted Slack posts, anything.
+prose, and anything else.
 
 The rule applies regardless of context. When summarizing or paraphrasing
 other text, substitute or rephrase rather than copying an em dash through.
@@ -23,18 +23,18 @@ other text, substitute or rephrase rather than copying an em dash through.
 ## Examples
 
 BAD
-- The cell is healthy — all 14 ArgoCD apps are Synced.
-- c208 took 3× the effort — it was the first sitetest cell in IAD4.
-- Three durable fixes are open — Path B, registry hostname, AppRole mirror.
+- The build is green — all tests passed.
+- This took longer than expected — it was the first migration of its kind.
+- Three fixes are open — auth, retries, and logging.
 
 GOOD
-- The cell is healthy. All 14 ArgoCD apps are Synced.
-- c208 took 3× the effort because it was the first sitetest cell in IAD4.
-- Three durable fixes are open: Path B, registry hostname, AppRole mirror.
+- The build is green. All tests passed.
+- This took longer than expected because it was the first migration of its kind.
+- Three fixes are open: auth, retries, and logging.
 
 ## Other dashes are fine
 
-- **Hyphen** (`-`, in compound words like `cell-manager`, `well-known`): keep as is.
+- **Hyphen** (`-`, in compound words like `well-known`, `read-only`): keep as is.
 - **En dash** (`–`, U+2013, in numeric ranges like `May 19–20`): keep as is.
 - **Em dash** (`—`, U+2014): do not use.
 
