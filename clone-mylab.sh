@@ -43,23 +43,6 @@ clone_if_missing "git@github.com:apoorv-kulkarni/vigiles.git"
 clone_if_missing "https://github.com/jef/streetmerchant.git"
 clone_if_missing "https://github.com/rdeepak2002/reddit-place-script-2022.git"
 
-# --- Older / practice repos (uncomment any you still want under ~/myLab) ---
-# clone_if_missing "git@github.com:apoorv-kulkarni/apoorv-kulkarni.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/cpp_practice.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/nodejsPractice.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/GoogleCommuteTime.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/urlChecker.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/leetcode.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/highCharts-SMM.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/nodeschool-javascript.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/NumbersToRomanNumeral.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/SonosController.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/python_practice.git"
-# clone_if_missing "git@github.com:apoorv-kulkarni/GoLangExploration.git"
-
-# --- Separate learning repo (not under ~/myLab; lives at ~/Personal_Practice/) ---
-# mkdir -p "$HOME/Personal_Practice" && git clone <url> "$HOME/Personal_Practice/<name>"
-
 echo ""
 echo -e "${GREEN}Done.${NC} Workspace is at $MYLAB_DIR"
 echo "Next: cd $MYLAB_DIR/initMe && bash install.sh   # symlink dotfiles + Cursor rules"
