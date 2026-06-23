@@ -23,11 +23,6 @@ Per-repo docs override this index for that repo.
 | `mechanical-watch-ui/` | Vanilla HTML/JS. No build step; open `index.html` in a browser. |
 | `apoorv-kulkarni.github.io/` | Jekyll site: `bundle install` then `bundle exec jekyll serve`. |
 
-## Personal_Practice
-
-A separate practice repo may live at `~/Personal_Practice/` (not under `~/myLab/`).
-No shared build system or test framework.
-
 ## On-demand references
 
 Load only when the task needs them:

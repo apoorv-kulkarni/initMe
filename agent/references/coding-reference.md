@@ -21,7 +21,7 @@ Personal repos live under `~/myLab/`. Each project is usually independent
 
 - **Go**: services, CLIs, tooling
 - **Python**: scripting, automation, LeetCode-style practice
-- **Java / Spring Boot**: e.g. `demo/` (`./mvnw test`)
+- **Java / Spring Boot**: `./mvnw test` when the project uses Maven Wrapper
 - **Jekyll**: personal site (`bundle exec jekyll serve`)
 - **Vanilla HTML/JS**: static frontends, no build step
 - **HCL**: Terraform
