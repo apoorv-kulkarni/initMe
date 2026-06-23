@@ -8,8 +8,6 @@ independent project with its own build and test commands.
 Machine setup, shell config, and global agent rules live in `~/myLab/initMe/`
 (symlinked into `~/.zshrc`, `~/.cursor/rules/`, `~/.claude/CLAUDE.md`, etc.).
 
-A separate practice repo may live at `~/Personal_Practice/`.
-
 ## Read this first
 
 Before `ls`-ing, `find`-ing, or grepping around to understand layout or
