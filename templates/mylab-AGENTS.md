@@ -22,6 +22,8 @@ Per-repo docs override this index for that repo.
 | `initMe/` | Dotfiles and bootstrap. Read `initMe/AGENTS.md` before editing scripts. Verify with `git ls-files -z '*.sh' \| xargs -0 shellcheck`. |
 | `mechanical-watch-ui/` | Vanilla HTML/JS. No build step; open `index.html` in a browser. |
 | `apoorv-kulkarni.github.io/` | Jekyll site: `bundle install` then `bundle exec jekyll serve`. |
+| `vigiles/` | Go supply-chain scanner. `go build -o vigiles .`; `make test`. Read repo `README.md`. |
+| `trending-screensaver/` | macOS screensaver + GitHub Pages. `python3 fetch_trends.py`; `cd screensaver && make install`. |
 
 ## On-demand references
 
