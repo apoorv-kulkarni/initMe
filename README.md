@@ -1,6 +1,6 @@
 # initMe
 
-Personal Mac bootstrap: Homebrew, shell, dotfiles, Cursor rules, infra tools, and `~/myLab` repo sync.
+Personal Mac bootstrap: Homebrew, shell, dotfiles, AI agent rules, infra tools, and `~/myLab` repo sync.
 
 Repos live under **`~/myLab/`** (each project is usually its own git repo). initMe itself is `~/myLab/initMe`.
 
@@ -51,6 +51,8 @@ Or preview the curl installer path:
 
 ```
 initMe/
+├── AGENTS.md                 # initMe-specific agent instructions
+├── CLAUDE.md                 # @AGENTS.md for Claude Code in this repo
 ├── install-macos.sh          # curl | bash entry (Homebrew-style)
 ├── install.sh                # Symlink dotfiles into ~
 ├── bootstrap.sh              # Full macOS setup (brew bundle, launchd, …)
@@ -124,7 +126,9 @@ On a fresh machine, bootstrap will:
 3. Run `gh auth login` for GitHub
 4. **Prompt** for git name / email / optional GPG key when `user.name` is not set (stored in `~/.gitconfig`, not in this repo)
 
-`ssh_config` points GitHub at `id_ed25519` (with `id_rsa` fallback) and sets `IdentitiesOnly yes` to avoid offering every key in the agent.
+`ssh_config` points GitHub at `id_ed25519` (bootstrap default), then
+`gigithub_2024` and `github_rsa` as fallbacks. OpenSSH skips missing keys.
+`IdentitiesOnly yes` limits which keys are offered to GitHub.
 
 Vault is installed via Homebrew on macOS; log in manually when you need it (`vault login`).
 
@@ -191,6 +195,9 @@ bash bootstrap-pi.sh
 ```bash
 cd ~/myLab/initMe && bash install.sh
 ```
+
+This also regenerates `~/.cursor/rules/` from `agent/` and refreshes Claude
+and `~/myLab/AGENTS.md` adapters.
 
 ## Dotfiles are symlinked, not copied
 
