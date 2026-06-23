@@ -1,4 +1,3 @@
-# Cursor rule manifest: output_name<TAB>source_file<TAB>alwaysApply<TAB>description
 workspace.mdc	00-workspace.md	true	Load repo context before exploring, and route new learnings to the right home.
 cursorrules.mdc	01-core-behavior.md	true	Personal AI behavioral core. Interaction guidelines, surgical edits, simplicity bias, grounding/evidence requirements, infra safety, docs.
 iterative-work.mdc	02-iterative-work.md	true	Bounded iterative work protocol for autonomous retries.
