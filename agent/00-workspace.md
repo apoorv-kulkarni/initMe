@@ -14,7 +14,7 @@ Before `ls`-ing, `find`-ing, or grepping around to understand layout or
 conventions:
 
 1. Check the repo's own `AGENTS.md` / `README.md` / `CLAUDE.md`. It likely
-   has the answer.
+  has the answer.
 2. For work under `~/myLab/`, read `~/myLab/AGENTS.md` (workspace index).
 3. Only then start poking at the filesystem.
 
@@ -30,12 +30,12 @@ learning up a rung only once it has earned the wider scope:
 
 1. **This chat only** - a one-off fact you will not reuse. Do nothing.
 2. **Personal notes** - durable but personal, never committed. The default
-   home for facts about your environment (conventions, gotchas, runbooks).
+  home for facts about your environment (conventions, gotchas, runbooks).
 3. **A repo's committed rule file** - a repeatable, file-scoped *convention*
-   you would want in every session for that repo (e.g. `.cursor/rules/*.mdc`
+  you would want in every session for that repo (e.g. `.cursor/rules/*.mdc`
    under that project). Scoped to one repo under `~/myLab/`.
 4. **Personal dotfiles rules** - a generic *method or behavior*, not a domain
-   fact, that applies in any repo or stack. Lives in `~/myLab/initMe/agent/`
+  fact, that applies in any repo or stack. Lives in `~/myLab/initMe/agent/`
    and is installed to tool-specific adapters by `install.sh`.
 
 Rule of thumb: **facts stay personal (rungs 1-2); methods become rules
