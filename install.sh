@@ -60,12 +60,8 @@ ln -sf "$REPO_DIR/ssh_config" "$SSH_CONFIG"
 info "Linked $SSH_CONFIG -> $REPO_DIR/ssh_config"
 chmod 600 "$SSH_CONFIG"
 
-# --- Cursor rules ---
-mkdir -p "$HOME/.cursor/rules"
-for rule in "$REPO_DIR/cursor-rules"/*.mdc; do
-  [[ -f "$rule" ]] || continue
-  link_file "$rule" "$HOME/.cursor/rules/$(basename "$rule")"
-done
+# --- Agent rules (canonical agent/ -> Cursor, Claude, myLab index) ---
+bash "$REPO_DIR/scripts/build-agent-adapters.sh"
 
 # --- Personal scripts on PATH (explicit list) ---
 mkdir -p "$HOME/.local/bin"

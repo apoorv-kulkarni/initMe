@@ -1,13 +1,8 @@
----
-description: Cross-language reference - project workflow, languages, code standards, design principles, error handling, dependency patterns, tool aliases. Read when writing or reviewing code.
-alwaysApply: false
----
-
 # Coding reference
 
 Cross-language standards and stack context. The behavioral core (interaction
 guidelines, surgical edits, grounding, infra safety) lives in
-`cursorrules.mdc`.
+`agent/01-core-behavior.md`.
 
 ## Project workflow
 
