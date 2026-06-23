@@ -59,7 +59,10 @@ initMe/
 ├── sync-repos.sh             # Fast-forward main/master only under ~/myLab
 ├── git/
 │   └── gitconfig             # Shared git behavior (included from ~/.gitconfig)
-├── cursor-rules/             # Global Cursor rules → ~/.cursor/rules/
+├── agent/                      # Canonical agent rules (plain .md)
+├── adapters/                   # Claude Code entry point template
+├── templates/                  # Workspace AGENTS.md template → ~/myLab/
+├── scripts/                    # build-agent-adapters.sh
 ├── .github/workflows/        # CI (shellcheck on *.sh)
 ├── .shellcheckrc             # ShellCheck defaults
 ├── Brewfile                  # Homebrew formulae and casks
@@ -81,7 +84,7 @@ initMe/
 | Kubernetes | kubectl, kubectx, kubelogin, k9s, minikube | kubectl, kubectx, k9s |
 | Shell | oh-my-zsh + Powerlevel10k + plugins | oh-my-zsh + Powerlevel10k + plugins |
 | Dotfiles | `zshrc`, `p10k`, SSH, gitconfig include, global gitignore | `zshrc` + SSH symlinked |
-| Cursor rules | `cursor-rules/*.mdc` → `~/.cursor/rules/` | — |
+| Agent rules | `agent/` → `~/.cursor/rules/`, `~/.claude/CLAUDE.md`, `~/myLab/AGENTS.md` | — |
 | SSH | `id_ed25519` key + keychain; `ssh_config` for GitHub | `id_ed25519` + shared `ssh_config` |
 | GitHub CLI | Install + `gh auth login` | Install + `gh auth login` |
 | macOS defaults | Finder, key repeat, Dock, screenshots (prompted) | — |
@@ -135,9 +138,22 @@ git config --global commit.gpgsign true
 git config --global gpg.program gpg   # or /opt/homebrew/bin/gpg on Apple Silicon
 ```
 
-## Cursor AI config
+## AI agent config
 
-`cursor-rules/*.mdc` are symlinked to `~/.cursor/rules/` and cover interaction style, coding standards, `~/myLab` layout, debugging habits, and PR cleanup. Open **`~/myLab`** as the workspace; optionally copy `mylab.cursorignore.example` to `~/myLab/.cursorignore`.
+**Canonical rules** live in `agent/` (plain Markdown). `install.sh` runs
+`scripts/build-agent-adapters.sh` to install tool-specific adapters:
+
+| Tool | Installed path |
+| --- | --- |
+| Cursor | `~/.cursor/rules/*.mdc` (generated from `agent/manifest.tsv`) |
+| Claude Code | `~/.claude/CLAUDE.md` |
+| Workspace index | `~/myLab/AGENTS.md` and `~/myLab/CLAUDE.md` (symlink) |
+
+Read `AGENTS.md` at the initMe repo root before editing bootstrap scripts.
+Open **`~/myLab`** as the Cursor workspace; optionally copy
+`mylab.cursorignore.example` to `~/myLab/.cursorignore`.
+
+See `agent/README.md` for layout and how to add rules.
 
 ## Other install paths
 
@@ -180,7 +196,7 @@ cd ~/myLab/initMe && bash install.sh
 
 `zshrc`, `p10k.zsh`, `ssh_config`, and `gitignore_global` are symlinked from this repo. `bootstrap.sh`, `bootstrap-pi.sh`, and `install.sh` all link `ssh_config` → `~/.ssh/config`; they back up an existing plain file to `~/.ssh/config.bak.<timestamp>` before replacing it with a symlink.
 
-`git/gitconfig` is **included** from `~/.gitconfig` so your identity stays local. `cursor-rules/*.mdc` symlink to `~/.cursor/rules/`.
+`git/gitconfig` is **included** from `~/.gitconfig` so your identity stays local. Agent rules in `agent/` install to `~/.cursor/rules/` and `~/.claude/CLAUDE.md` via `install.sh`.
 
 ## Development
 

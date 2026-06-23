@@ -1,8 +1,3 @@
----
-description: Do not use em dashes in any output
-alwaysApply: true
----
-
 # No Em Dashes
 
 Do not use em dashes (`—`, U+2014) in any output. This includes assistant
