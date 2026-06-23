@@ -32,6 +32,9 @@ install_file() {
   local src="$1" dst="$2"
   if [[ -L "$dst" ]]; then
     rm "$dst"
+  elif [[ -f "$dst" ]] && cmp -s "$src" "$dst"; then
+    info "Up to date: $dst"
+    return 0
   elif [[ -f "$dst" ]]; then
     warn "Backing up existing $dst -> ${dst}.bak"
     mv "$dst" "${dst}.bak"

@@ -19,22 +19,11 @@ Per-repo docs override this index for that repo.
 
 | Directory | Notes |
 | --- | --- |
-| `initMe/` | Dotfiles and bootstrap. Read `initMe/AGENTS.md` before editing scripts. Verify with `git ls-files '*.sh' \| xargs shellcheck`. |
+| `initMe/` | Dotfiles and bootstrap. Read `initMe/AGENTS.md` before editing scripts. Verify with `git ls-files -z '*.sh' \| xargs -0 shellcheck`. |
 | `mechanical-watch-ui/` | Vanilla HTML/JS. No build step; open `index.html` in a browser. |
 | `apoorv-kulkarni.github.io/` | Jekyll site: `bundle install` then `bundle exec jekyll serve`. |
-| `demo/` | Java/Spring Boot: `./mvnw spring-boot:run`, `./mvnw test`. |
-
-## Personal_Practice
-
-A separate practice repo may live at `~/Personal_Practice/` (not under `~/myLab/`).
-No shared build system or test framework. Projects run standalone:
-
-- `python/` - LeetCode-style scripts; run with `python <script>.py`
-- `c++/` - compile with `g++`
-- `rust/hello-world/` - `cargo run`
-- `iOS/` - Swift playground, open in Xcode
-- `apoorv-kulkarni.github.io/` - portfolio duplicate (Bootstrap 5)
-- `dino.py` - reads `dataset1.csv` / `dataset2.csv` from repo root
+| `vigiles/` | Go supply-chain scanner. `go build -o vigiles .`; `make test`. Read repo `README.md`. |
+| `trending-screensaver/` | macOS screensaver + GitHub Pages. `python3 fetch_trends.py`; `cd screensaver && make install`. |
 
 ## On-demand references
 
