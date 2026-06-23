@@ -24,7 +24,20 @@ source "$ZSH/oh-my-zsh.sh"
 # -----------------------------------------------------------------------------
 # PATH
 # -----------------------------------------------------------------------------
-export PATH="/usr/local/bin:/usr/local/sbin:$HOME/.local/bin:$PATH"
+# Homebrew (macOS): shellenv sets HOMEBREW_PREFIX and prepends brew paths.
+if [[ "$(uname)" == "Darwin" ]]; then
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -x /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+fi
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# tfenv / Go (Pi bootstrap installs to these paths; no-op if absent)
+[[ -d "$HOME/.tfenv/bin" ]] && export PATH="$HOME/.tfenv/bin:$PATH"
+[[ -d /usr/local/go/bin ]] && export PATH="/usr/local/go/bin:$PATH"
 
 # VS Code CLI (macOS only)
 [[ -d "/Applications/Visual Studio Code.app" ]] && \

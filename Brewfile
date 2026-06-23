@@ -29,6 +29,7 @@ brew "yq"
 brew "wget"
 brew "tree"
 brew "ripgrep"
+brew "shellcheck"
 
 # ── Zsh plugins ───────────────────────────────────────────────────────────────
 brew "zsh-autosuggestions"
