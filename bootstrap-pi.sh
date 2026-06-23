@@ -9,7 +9,7 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARCH="$(dpkg --print-architecture 2>/dev/null || uname -m)"
 STEP=0
-TOTAL=13
+TOTAL=14
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
     echo "bootstrap-pi.sh is for Linux / Raspberry Pi. On macOS, run: bash bootstrap.sh"
@@ -83,7 +83,6 @@ fi
 step "Go"
 if ! command -v go &>/dev/null; then
     echo "  Fetching latest Go for $ARCH..."
-    GO_VERSION=$(curl -s https://go.dev/VERSION?m=text | head -1)
     case "$ARCH" in
         arm64|aarch64) GO_ARCH="arm64" ;;
         armhf|armv7l)  GO_ARCH="armv6l" ;;
@@ -92,6 +91,7 @@ if ! command -v go &>/dev/null; then
     esac
     if [[ -n "$GO_ARCH" ]]; then
         if ! $DRY_RUN; then
+            GO_VERSION=$(curl -s https://go.dev/VERSION?m=text | head -1)
             curl -fsSL "https://go.dev/dl/${GO_VERSION}.linux-${GO_ARCH}.tar.gz" -o /tmp/go.tar.gz
             sudo rm -rf /usr/local/go
             sudo tar -C /usr/local -xzf /tmp/go.tar.gz
@@ -99,7 +99,7 @@ if ! command -v go &>/dev/null; then
             export PATH="/usr/local/go/bin:$PATH"
             echo "  Installed: $(go version)"
         else
-            echo "  [dry-run] would install ${GO_VERSION} for ${GO_ARCH}"
+            echo "  [dry-run] would install latest Go for ${GO_ARCH}"
         fi
     fi
 else
@@ -159,19 +159,19 @@ fi
 step "kubectl"
 if ! command -v kubectl &>/dev/null; then
     echo "  Installing..."
-    K8S_VERSION=$(curl -sL https://dl.k8s.io/release/stable.txt)
     case "$ARCH" in
         arm64|aarch64) K8S_ARCH="arm64" ;;
         armhf|armv7l)  K8S_ARCH="arm" ;;
         amd64|x86_64)  K8S_ARCH="amd64" ;;
     esac
     if ! $DRY_RUN; then
+        K8S_VERSION=$(curl -sL https://dl.k8s.io/release/stable.txt)
         curl -fsSL "https://dl.k8s.io/release/${K8S_VERSION}/bin/linux/${K8S_ARCH}/kubectl" -o /tmp/kubectl
         sudo install -m 0755 /tmp/kubectl /usr/local/bin/kubectl
         rm /tmp/kubectl
         echo "  Installed: $(kubectl version --client 2>/dev/null | head -1 || echo kubectl)"
     else
-        echo "  [dry-run] would install kubectl ${K8S_VERSION} for ${K8S_ARCH}"
+        echo "  [dry-run] would install latest kubectl for ${K8S_ARCH}"
     fi
 else
     echo "  Already installed: $(kubectl version --client 2>/dev/null | head -1 || echo kubectl)"
@@ -200,19 +200,19 @@ fi
 step "k9s"
 if ! command -v k9s &>/dev/null; then
     echo "  Installing..."
-    K9S_VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | jq -r .tag_name)
     case "$ARCH" in
         arm64|aarch64) K9S_ARCH="arm64" ;;
         armhf|armv7l)  K9S_ARCH="arm" ;;
         amd64|x86_64)  K9S_ARCH="amd64" ;;
     esac
     if ! $DRY_RUN; then
+        K9S_VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | jq -r .tag_name)
         curl -fsSL "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_${K9S_ARCH}.tar.gz" \
             | tar -xz -C /tmp k9s
         sudo mv /tmp/k9s /usr/local/bin/k9s
         echo "  Installed: $(k9s version --short 2>/dev/null | head -1)"
     else
-        echo "  [dry-run] would install k9s ${K9S_VERSION} for ${K9S_ARCH}"
+        echo "  [dry-run] would install latest k9s for ${K9S_ARCH}"
     fi
 else
     echo "  Already installed."
@@ -224,19 +224,19 @@ fi
 step "yq"
 if ! command -v yq &>/dev/null; then
     echo "  Installing..."
-    YQ_VERSION=$(curl -s https://api.github.com/repos/mikefarah/yq/releases/latest | jq -r .tag_name)
     case "$ARCH" in
         arm64|aarch64) YQ_ARCH="arm64" ;;
         armhf|armv7l)  YQ_ARCH="arm" ;;
         amd64|x86_64)  YQ_ARCH="amd64" ;;
     esac
     if ! $DRY_RUN; then
+        YQ_VERSION=$(curl -s https://api.github.com/repos/mikefarah/yq/releases/latest | jq -r .tag_name)
         curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${YQ_ARCH}" -o /tmp/yq
         sudo install -m 0755 /tmp/yq /usr/local/bin/yq
         rm /tmp/yq
         echo "  Installed: $(yq --version)"
     else
-        echo "  [dry-run] would install yq ${YQ_VERSION} for ${YQ_ARCH}"
+        echo "  [dry-run] would install latest yq for ${YQ_ARCH}"
     fi
 else
     echo "  Already installed: $(yq --version)"
@@ -280,7 +280,11 @@ fi
 step "oh-my-zsh + Powerlevel10k + plugins"
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
     echo "  Installing oh-my-zsh..."
-    run sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended"
+    if ! $DRY_RUN; then
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --unattended"
+    else
+        echo "  [dry-run] would install oh-my-zsh"
+    fi
 else
     echo "  oh-my-zsh already installed."
 fi
@@ -334,9 +338,14 @@ if [[ -f "$REPO_DIR/git/gitconfig" ]]; then
 fi
 
 # Set zsh as default shell if it isn't already
-if [[ "$SHELL" != "$(which zsh)" ]]; then
-    echo "  Setting zsh as default shell..."
-    run chsh -s "$(which zsh)"
+if command -v zsh &>/dev/null; then
+    zsh_path="$(command -v zsh)"
+    if [[ "$SHELL" != "$zsh_path" ]]; then
+        echo "  Setting zsh as default shell..."
+        run chsh -s "$zsh_path"
+    fi
+elif $DRY_RUN; then
+    echo "  [dry-run] would set zsh as default shell after install"
 fi
 
 # -----------------------------------------------------------------------------
