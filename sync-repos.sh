@@ -65,6 +65,21 @@ is_excluded() {
 
 log() { printf '%s  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" | tee -a "$LOG_FILE"; }
 
+# Resolve the remote default branch: prefer origin/HEAD after fetch, else main/master.
+resolve_default_branch() {
+  local branch=""
+  branch="$(git symbolic-ref -q refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || true)"
+  if [[ -z "$branch" ]]; then
+    for candidate in main master; do
+      if git rev-parse --verify "refs/remotes/origin/${candidate}" &>/dev/null; then
+        branch="$candidate"
+        break
+      fi
+    done
+  fi
+  printf '%s' "$branch"
+}
+
 sync_repo() {
   local repo_path="$1"
   local repo_name
@@ -78,20 +93,15 @@ sync_repo() {
     return 0
   fi
 
-  local default_branch=""
-  for candidate in main master; do
-    if git rev-parse --verify "refs/remotes/origin/${candidate}" &>/dev/null; then
-      default_branch="$candidate"
-      break
-    fi
-  done
-  if [[ -z "$default_branch" ]]; then
-    log "[$repo_name] SKIP - no origin/main or origin/master found"
+  if ! git fetch origin --prune --quiet 2>/dev/null; then
+    log "[$repo_name] SKIP - fetch failed (network/auth)"
     return 0
   fi
 
-  if ! git fetch origin "$default_branch" --prune --quiet 2>/dev/null; then
-    log "[$repo_name] SKIP - fetch failed (network/auth)"
+  local default_branch
+  default_branch="$(resolve_default_branch)"
+  if [[ -z "$default_branch" ]]; then
+    log "[$repo_name] SKIP - no default branch found (origin/HEAD, main, or master)"
     return 0
   fi
 

@@ -19,7 +19,7 @@ Per-repo docs override this index for that repo.
 
 | Directory | Notes |
 | --- | --- |
-| `initMe/` | Dotfiles and bootstrap. Read `initMe/AGENTS.md` before editing scripts. Verify with `shellcheck *.sh`. |
+| `initMe/` | Dotfiles and bootstrap. Read `initMe/AGENTS.md` before editing scripts. Verify with `git ls-files '*.sh' \| xargs shellcheck`. |
 | `mechanical-watch-ui/` | Vanilla HTML/JS. No build step; open `index.html` in a browser. |
 | `apoorv-kulkarni.github.io/` | Jekyll site: `bundle install` then `bundle exec jekyll serve`. |
 | `demo/` | Java/Spring Boot: `./mvnw spring-boot:run`, `./mvnw test`. |
