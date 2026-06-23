@@ -110,44 +110,48 @@ fi
 # 4. pyenv + Python
 # -----------------------------------------------------------------------------
 step "Python (pyenv)"
-export PYENV_ROOT="$HOME/.pyenv"
-if [[ ! -d "$PYENV_ROOT" ]]; then
-    echo "  Installing pyenv..."
-    if ! $DRY_RUN; then
+if ! $DRY_RUN; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    if [[ ! -d "$PYENV_ROOT" ]]; then
+        echo "  Installing pyenv..."
         curl -fsSL https://pyenv.run | bash
-    else
-        echo "  [dry-run] would install pyenv via pyenv.run"
     fi
-fi
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
 
-if [[ -z "$(pyenv versions --bare 2>/dev/null)" ]]; then
-    echo "  Installing latest stable Python..."
-    LATEST_PYTHON=$(pyenv install --list | grep -E '^\s+3\.[0-9]+\.[0-9]+$' | grep -v 'dev\|rc\|alpha\|beta' | tail -1 | tr -d ' ')
-    run pyenv install "$LATEST_PYTHON"
-    run pyenv global "$LATEST_PYTHON"
-    echo "  Python $LATEST_PYTHON set as global"
+    if [[ -z "$(pyenv versions --bare 2>/dev/null)" ]]; then
+        echo "  Installing latest stable Python..."
+        LATEST_PYTHON=$(pyenv install --list | grep -E '^\s+3\.[0-9]+\.[0-9]+$' | grep -v 'dev\|rc\|alpha\|beta' | tail -1 | tr -d ' ')
+        run pyenv install "$LATEST_PYTHON"
+        run pyenv global "$LATEST_PYTHON"
+        echo "  Python $LATEST_PYTHON set as global"
+    else
+        echo "  $(python3 --version) (managed by pyenv)"
+    fi
 else
-    echo "  $(python3 --version) (managed by pyenv)"
+    echo "  [dry-run] would install pyenv and configure Python if missing"
 fi
 
 # -----------------------------------------------------------------------------
 # 5. Terraform (tfenv)
 # -----------------------------------------------------------------------------
 step "Terraform (tfenv)"
-if [[ ! -d "$HOME/.tfenv" ]]; then
-    echo "  Cloning tfenv..."
-    run git clone --depth=1 https://github.com/tfutils/tfenv.git "$HOME/.tfenv"
-fi
-export PATH="$HOME/.tfenv/bin:$PATH"
+if ! $DRY_RUN; then
+    if [[ ! -d "$HOME/.tfenv" ]]; then
+        echo "  Cloning tfenv..."
+        run git clone --depth=1 https://github.com/tfutils/tfenv.git "$HOME/.tfenv"
+    fi
+    export PATH="$HOME/.tfenv/bin:$PATH"
 
-if ! tfenv list 2>/dev/null | grep -q '[0-9]'; then
-    echo "  Installing latest Terraform..."
-    run tfenv install latest
-    run tfenv use latest
+    if ! tfenv list 2>/dev/null | grep -q '[0-9]'; then
+        echo "  Installing latest Terraform..."
+        run tfenv install latest
+        run tfenv use latest
+    fi
+    echo "  $(terraform version | head -1)"
+else
+    echo "  [dry-run] would clone tfenv and install latest Terraform if missing"
 fi
-$DRY_RUN || echo "  $(terraform version | head -1)"
 
 # -----------------------------------------------------------------------------
 # 6. kubectl
