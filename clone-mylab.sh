@@ -21,7 +21,9 @@ clone_if_missing() {
   local dest="$MYLAB_DIR/$name"
 
   if [[ -d "$dest/.git" ]]; then
-    echo -e "${YELLOW}[skip]${NC} $name (already exists)"
+    echo -e "${YELLOW}[skip]${NC} $name (already cloned)"
+  elif [[ -d "$dest" ]]; then
+    echo -e "${YELLOW}[skip]${NC} $name (directory exists without .git — e.g. tarball install)"
   else
     echo -e "${GREEN}[clone]${NC} $name"
     git clone "$url" "$dest"

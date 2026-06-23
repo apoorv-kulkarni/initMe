@@ -52,7 +52,8 @@ if ! $DRY_RUN; then
         build-essential \
         libssl-dev \
         libffi-dev \
-        python3-dev
+        python3-dev \
+        shellcheck
 else
     echo "  [dry-run] would run: apt-get install git gnupg curl wget tree jq ripgrep zsh vim build-essential ..."
 fi

@@ -8,10 +8,10 @@ install tool-specific adapters:
 
 | Output | Source |
 | --- | --- |
-| `~/.cursor/rules/*.mdc` | `agent/*.md` + `agent/manifest.tsv` (YAML frontmatter added at install) |
+| `~/.cursor/rules/*.mdc` | `agent/*.md` + `agent/manifest.tsv` (YAML frontmatter added at install; stale rules pruned via `.initme-managed-rules`) |
 | `~/.claude/CLAUDE.md` | `adapters/claude-global.md` |
 | `~/myLab/AGENTS.md` | `templates/mylab-AGENTS.md` (when `~/myLab/` exists) |
-| `~/myLab/CLAUDE.md` | Symlink to `~/myLab/AGENTS.md` |
+| `~/myLab/CLAUDE.md` | `adapters/mylab-CLAUDE.md` (copied, not symlinked) |
 
 ## Layout
 
