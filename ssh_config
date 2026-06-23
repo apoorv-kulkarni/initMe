@@ -1,4 +1,4 @@
-# Matches keys created by bootstrap (ed25519). id_rsa is a fallback for older keys.
+# GitHub SSH: bootstrap creates id_ed25519; older machines may use gigithub_2024 or github_rsa.
 # IgnoreUnknown keeps UseKeychain valid on macOS without errors on Linux/Pi OpenSSH.
 Host github.com
   IgnoreUnknown UseKeychain
@@ -6,4 +6,5 @@ Host github.com
   UseKeychain yes
   IdentitiesOnly yes
   IdentityFile ~/.ssh/id_ed25519
-  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/gigithub_2024
+  IdentityFile ~/.ssh/github_rsa
