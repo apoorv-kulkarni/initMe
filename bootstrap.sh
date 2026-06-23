@@ -368,15 +368,10 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 17. Cursor rules
+# 17. Agent rules (canonical agent/ -> Cursor, Claude, myLab index)
 # -----------------------------------------------------------------------------
-step "Cursor rules"
-run mkdir -p "$HOME/.cursor/rules"
-for rule in "$REPO_DIR/cursor-rules"/*.mdc; do
-    name="$(basename "$rule")"
-    run ln -sf "$rule" "$HOME/.cursor/rules/$name"
-    echo "  Symlinked: ~/.cursor/rules/$name"
-done
+step "Agent rules"
+run bash "$REPO_DIR/scripts/build-agent-adapters.sh"
 
 # -----------------------------------------------------------------------------
 echo ""

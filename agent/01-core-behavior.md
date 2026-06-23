@@ -1,15 +1,10 @@
----
-description: Personal Cursor AI behavioral core. Interaction guidelines, surgical edits, simplicity bias, grounding/evidence requirements, infra safety, docs. Language/standards reference lives in the requestable coding-reference.mdc.
-alwaysApply: true
----
-
-# Cursor AI Context
+# Core behavior
 
 > This is the always-on behavioral core. The cross-language reference
 > (project workflow, languages, code standards, design principles, error
 > handling, dependency/infra patterns, tool aliases) lives in
-> `coding-reference.mdc`, which is requestable and loads on demand. Read it
-> when writing or reviewing code.
+> `agent/references/coding-reference.md`, which loads on demand. Read it when
+> writing or reviewing code.
 
 ## AI Assistant Interaction Guidelines
 
@@ -50,7 +45,8 @@ Write the minimum code that solves the stated problem.
 
 **Test:** would a senior reviewer say this is overengineered for what it does? If yes, simplify.
 
-This complements the **KISS** principle under Design Principles (see `coding-reference.mdc`) with concrete operational guidance.
+This complements the **KISS** principle under Design Principles (see
+`agent/references/coding-reference.md`) with concrete operational guidance.
 
 ## Grounding & Evidence Requirements
 
@@ -119,3 +115,4 @@ counter++
 // GOOD - explains non-obvious intent
 // Rate-limit to avoid overwhelming the upstream API during bulk imports
 time.Sleep(200 * time.Millisecond)
+```
