@@ -1,8 +1,3 @@
----
-description: Generic debugging methods (domain-agnostic). Read when diagnosing a failure, an unexpected result, a flaky/silent CI job, or any "this should work but doesn't" situation, in any repo or stack.
-alwaysApply: false
----
-
 # Debugging method
 
 Domain-agnostic debugging habits. These are about *how to reason*, not about

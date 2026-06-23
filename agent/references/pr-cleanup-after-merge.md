@@ -1,8 +1,3 @@
----
-description: Post-PR cleanup workflow. Read this AFTER you help create a PR (gh pr create, git push of a new branch). It schedules a delayed check to verify the PR merged and prune local branches. Not needed otherwise.
-alwaysApply: false
----
-
 # Post-PR cleanup
 
 When you help the user create a PR (via `gh pr create`, `git push` of a new
