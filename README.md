@@ -151,7 +151,7 @@ git config --global gpg.program gpg   # or /opt/homebrew/bin/gpg on Apple Silico
 | --- | --- |
 | Cursor | `~/.cursor/rules/*.mdc` (generated from `agent/manifest.tsv`) |
 | Claude Code | `~/.claude/CLAUDE.md` |
-| Workspace index | `~/myLab/AGENTS.md` and `~/myLab/CLAUDE.md` (symlink) |
+| Workspace index | `~/myLab/AGENTS.md` and `~/myLab/CLAUDE.md` (from `adapters/mylab-CLAUDE.md`) |
 
 Read `AGENTS.md` at the initMe repo root before editing bootstrap scripts.
 Open **`~/myLab`** as the Cursor workspace; optionally copy
@@ -210,7 +210,7 @@ and `~/myLab/AGENTS.md` adapters.
 Shell scripts are checked on push with [ShellCheck](https://www.shellcheck.net/) (see `.github/workflows/shellcheck.yml` and `.shellcheckrc`). Local check:
 
 ```bash
-shellcheck *.sh
+git ls-files '*.sh' | xargs shellcheck
 ```
 
 ## Keeping packages up to date
