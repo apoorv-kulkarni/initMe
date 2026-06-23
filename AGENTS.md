@@ -17,7 +17,7 @@ Portable instructions for any AI agent editing this repository.
 After editing shell scripts:
 
 ```bash
-git ls-files '*.sh' | xargs shellcheck
+git ls-files -z '*.sh' | xargs -0 shellcheck
 ```
 
 CI runs the same check (`.github/workflows/shellcheck.yml`).

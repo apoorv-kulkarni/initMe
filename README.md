@@ -22,6 +22,11 @@ bash clone-mylab.sh
 exec zsh
 ```
 
+The curl installer leaves `initMe` without `.git` until you convert it to a real
+clone (steps printed at the end of `install-macos.sh`). `sync-repos.sh` cannot
+update initMe until then. After `gh auth login`, run those conversion steps, or
+use `git clone` instead of the curl path if you prefer a git checkout from the start.
+
 ### On a machine that already has tools installed
 
 ```bash
@@ -210,7 +215,7 @@ and `~/myLab/AGENTS.md` adapters.
 Shell scripts are checked on push with [ShellCheck](https://www.shellcheck.net/) (see `.github/workflows/shellcheck.yml` and `.shellcheckrc`). Local check:
 
 ```bash
-git ls-files '*.sh' | xargs shellcheck
+git ls-files -z '*.sh' | xargs -0 shellcheck
 ```
 
 ## Keeping packages up to date
