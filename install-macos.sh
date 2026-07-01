@@ -77,11 +77,7 @@ trap - EXIT
 cleanup
 
 ohai "Installed to $DEST"
-warn "Tarball install has no .git yet. bootstrap.sh will install git."
-echo "After gh auth login, convert to a normal clone:"
-echo "  cd $DEST"
-echo "  git init && git remote add origin git@github.com:${OWNER}/${REPO}.git"
-echo "  git fetch origin && git reset --hard FETCH_HEAD && git branch -M master"
+warn "Tarball install has no .git yet; bootstrap.sh will convert it after GitHub auth."
 echo ""
 
 ohai "Running bootstrap.sh"

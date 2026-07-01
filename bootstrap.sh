@@ -7,8 +7,10 @@ set -euo pipefail
 # =============================================================================
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INITME_GIT_REMOTE="git@github.com:apoorv-kulkarni/initMe.git"
+INITME_DEFAULT_BRANCH="master"
 STEP=0
-TOTAL=16
+TOTAL=18
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
     echo "bootstrap.sh is for macOS only. On Linux / Raspberry Pi, run: bash bootstrap-pi.sh"
@@ -364,8 +366,41 @@ step "Agent rules"
 run bash "$REPO_DIR/scripts/build-agent-adapters.sh"
 
 # -----------------------------------------------------------------------------
+# 17. Tarball install → git clone (enables sync-repos.sh to update initMe)
+# -----------------------------------------------------------------------------
+step "initMe git clone"
+if [[ -d "$REPO_DIR/.git" ]]; then
+    echo "  Already a git clone."
+elif ! $DRY_RUN; then
+    echo "  Converting tarball checkout to git@github.com:apoorv-kulkarni/initMe.git ..."
+    (
+        cd "$REPO_DIR"
+        git init
+        git remote add origin "$INITME_GIT_REMOTE"
+        git fetch origin
+        git reset --hard FETCH_HEAD
+        git branch -M "$INITME_DEFAULT_BRANCH"
+    )
+    echo "  Done. sync-repos.sh can update initMe on future runs."
+else
+    echo "  [dry-run] would run: git init && git fetch origin && git reset --hard FETCH_HEAD"
+fi
+
+# -----------------------------------------------------------------------------
+# 18. Clone ~/myLab repos (SSH + gh auth must be done)
+# -----------------------------------------------------------------------------
+step "Clone myLab repos"
+run bash "$REPO_DIR/clone-mylab.sh"
+
+# -----------------------------------------------------------------------------
 echo ""
 echo "All done! Next steps:"
-echo "  1. Open a new terminal — all shell settings take effect"
+if ! $DRY_RUN && [[ -t 0 ]] && [[ "${BOOTSTRAP_NO_EXEC_ZSH:-}" != 1 ]]; then
+    echo "  1. Starting zsh with your new configuration..."
+    echo "  2. Run 'p10k configure' to set up your prompt style"
+    echo "     (or copy your .p10k.zsh from your old machine to skip this)"
+    exec zsh -l
+fi
+echo "  1. Run 'exec zsh' — shell settings take effect in a new session"
 echo "  2. Run 'p10k configure' to set up your prompt style"
 echo "     (or copy your .p10k.zsh from your old machine to skip this)"
