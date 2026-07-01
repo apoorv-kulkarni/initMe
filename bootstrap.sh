@@ -73,7 +73,8 @@ echo "  Ready at: $(brew --prefix 2>/dev/null || echo '(brew not yet installed)'
 # 3. Packages — brew bundle
 # -----------------------------------------------------------------------------
 step "Packages (Brewfile)"
-run brew bundle --file="$REPO_DIR/Brewfile"
+# Sequential installs avoid Homebrew 6.x parallel lock races (e.g. go vs gh).
+run brew bundle --file="$REPO_DIR/Brewfile" --jobs 1
 
 # -----------------------------------------------------------------------------
 # 4. Python (via pyenv)
