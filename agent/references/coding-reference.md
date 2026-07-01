@@ -28,8 +28,8 @@ Personal repos live under `~/myLab/`. Each project is usually independent
 - **YAML**: Kubernetes manifests, Helm charts
 - **Shell**: zsh/bash scripts for automation
 
-Infra tooling commonly available on a bootstrapped machine: Terraform (tfenv),
-Vault, kubectl, k9s, minikube.
+Infra tooling commonly available on a bootstrapped machine: Terraform, Vault
+(macOS via `hashicorp/tap`; Pi via tfenv), kubectl, k9s, minikube.
 
 ## Code standards
 
@@ -82,8 +82,8 @@ Vault, kubectl, k9s, minikube.
 
 ## Tools & aliases
 
-Installed via initMe bootstrap (`Brewfile`): `rg`, `jq`, `yq`, `gh`, `kubectl`,
-`k9s`, `terraform`, `vault`.
+Installed via initMe bootstrap (`Brewfile` / `bootstrap-pi.sh`): `rg`, `jq`, `yq`,
+`gh`, `kubectl`, `k9s`, `terraform`, `vault`.
 
 **Shell aliases** (from `~/myLab/initMe/zshrc`): `k` (kubectl), `ll`, `uuid`/`uuid1`.
 

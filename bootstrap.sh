@@ -8,7 +8,7 @@ set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STEP=0
-TOTAL=17
+TOTAL=16
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
     echo "bootstrap.sh is for macOS only. On Linux / Raspberry Pi, run: bash bootstrap-pi.sh"
@@ -76,18 +76,7 @@ step "Packages (Brewfile)"
 run brew bundle --file="$REPO_DIR/Brewfile"
 
 # -----------------------------------------------------------------------------
-# 4. Terraform (via tfenv)
-# -----------------------------------------------------------------------------
-step "Terraform"
-if ! tfenv list 2>/dev/null | grep -q '[0-9]'; then
-    echo "  Installing latest Terraform via tfenv..."
-    run tfenv install latest
-    run tfenv use latest
-fi
-$DRY_RUN || echo "  $(terraform version | head -1)"
-
-# -----------------------------------------------------------------------------
-# 5. Python (via pyenv)
+# 4. Python (via pyenv)
 # -----------------------------------------------------------------------------
 step "Python"
 if ! $DRY_RUN; then
@@ -108,7 +97,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 6. SSH key
+# 5. SSH key
 # -----------------------------------------------------------------------------
 step "SSH key"
 run mkdir -p "$HOME/.ssh"
@@ -146,7 +135,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 7. GitHub CLI auth
+# 6. GitHub CLI auth
 # -----------------------------------------------------------------------------
 step "GitHub CLI"
 if ! gh auth status &>/dev/null; then
@@ -161,7 +150,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 8. oh-my-zsh
+# 7. oh-my-zsh
 # -----------------------------------------------------------------------------
 step "oh-my-zsh"
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
@@ -172,7 +161,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 9. Powerlevel10k theme
+# 8. Powerlevel10k theme
 # -----------------------------------------------------------------------------
 step "Powerlevel10k"
 P10K_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
@@ -184,7 +173,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 10. zsh plugins
+# 9. zsh plugins
 # -----------------------------------------------------------------------------
 step "zsh plugins"
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
@@ -198,7 +187,7 @@ for plugin in zsh-autosuggestions zsh-syntax-highlighting; do
 done
 
 # -----------------------------------------------------------------------------
-# 11. zshrc — symlink so edits stay in sync with the repo
+# 10. zshrc — symlink so edits stay in sync with the repo
 # -----------------------------------------------------------------------------
 step "zshrc"
 if [[ -f "$HOME/.zshrc" && ! -L "$HOME/.zshrc" ]]; then
@@ -228,7 +217,7 @@ if [[ -f "$REPO_DIR/git/gitconfig" ]]; then
 fi
 
 # -----------------------------------------------------------------------------
-# 12. macOS defaults
+# 11. macOS defaults
 # -----------------------------------------------------------------------------
 step "macOS defaults"
 DEFAULTS_MARKER="$HOME/.config/initme/defaults_applied"
@@ -275,7 +264,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 13. Repo sync — launchd agent (runs every 6 hours)
+# 12. Repo sync — launchd agent (runs every 6 hours)
 # -----------------------------------------------------------------------------
 step "Repo sync (launchd)"
 PLIST_LABEL="com.apoorv.sync-repos"
@@ -319,7 +308,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 14. iTerm2 profile
+# 13. iTerm2 profile
 # -----------------------------------------------------------------------------
 step "iTerm2 profile"
 if [[ -f "$REPO_DIR/iterm2_profile.plist" ]]; then
@@ -330,7 +319,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 15. VS Code extensions
+# 14. VS Code extensions
 # -----------------------------------------------------------------------------
 step "VS Code extensions"
 if command -v code &>/dev/null; then
@@ -344,7 +333,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 16. Git config
+# 15. Git config
 # -----------------------------------------------------------------------------
 step "Git config"
 if [[ -z "$(git config --global user.name 2>/dev/null)" ]]; then
@@ -368,7 +357,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 17. Agent rules (canonical agent/ -> Cursor, Claude, myLab index)
+# 16. Agent rules (canonical agent/ -> Cursor, Claude, myLab index)
 # -----------------------------------------------------------------------------
 step "Agent rules"
 run bash "$REPO_DIR/scripts/build-agent-adapters.sh"

@@ -87,7 +87,7 @@ initMe/
 | --- | --- | --- |
 | Core packages | `brew bundle` (Brewfile) | `apt` + manual binaries |
 | Languages | Go, Python (pyenv) | Go, Python (pyenv) |
-| Infrastructure | Terraform (tfenv), Vault | Terraform (tfenv) |
+| Infrastructure | Terraform, Vault (`hashicorp/tap`) | Terraform (tfenv) |
 | Kubernetes | kubectl, kubectx, kubelogin, k9s, minikube | kubectl, kubectx, k9s |
 | Shell | oh-my-zsh + Powerlevel10k + plugins | oh-my-zsh + Powerlevel10k + plugins |
 | Dotfiles | `zshrc`, `p10k`, SSH, gitconfig include, global gitignore | `zshrc` + SSH symlinked |
@@ -135,7 +135,7 @@ On a fresh machine, bootstrap will:
 `gigithub_2024` and `github_rsa` as fallbacks. OpenSSH skips missing keys.
 `IdentitiesOnly yes` limits which keys are offered to GitHub.
 
-Vault is installed via Homebrew on macOS; log in manually when you need it (`vault login`).
+Terraform and Vault install via HashiCorp’s official Homebrew tap (`hashicorp/tap`) on macOS. Log into Vault manually when you need it (`vault login`).
 
 ## GPG commit signing (optional)
 
