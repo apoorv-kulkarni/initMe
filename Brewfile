@@ -14,9 +14,9 @@ brew "pyenv"
 
 # ── Infrastructure (HashiCorp official tap) ───────────────────────────────────
 # homebrew-core removed HashiCorp formulae; use signed binaries from hashicorp/tap.
-tap "hashicorp/tap"
-brew "hashicorp/tap/terraform"
-brew "hashicorp/tap/vault"
+tap "hashicorp/tap", trusted: true
+brew "hashicorp/tap/terraform", trusted: true
+brew "hashicorp/tap/vault", trusted: true
 
 # ── Kubernetes ────────────────────────────────────────────────────────────────
 brew "kubernetes-cli"

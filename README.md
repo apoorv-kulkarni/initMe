@@ -135,7 +135,7 @@ On a fresh machine, bootstrap will:
 `gigithub_2024` and `github_rsa` as fallbacks. OpenSSH skips missing keys.
 `IdentitiesOnly yes` limits which keys are offered to GitHub.
 
-Terraform and Vault install via HashiCorp’s official Homebrew tap (`hashicorp/tap`) on macOS. Log into Vault manually when you need it (`vault login`).
+Terraform and Vault install via HashiCorp’s official Homebrew tap (`hashicorp/tap`, declared as trusted in the Brewfile). Log into Vault manually when you need it (`vault login`).
 
 ## GPG commit signing (optional)
 
