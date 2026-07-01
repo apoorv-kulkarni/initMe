@@ -12,9 +12,11 @@ brew "go"
 brew "pyenv"
 # brew "dotnet@9"   # uncomment when you need .NET
 
-# ── Infrastructure & secrets ──────────────────────────────────────────────────
-brew "tfenv"
-brew "vault"
+# ── Infrastructure (HashiCorp official tap) ───────────────────────────────────
+# homebrew-core removed HashiCorp formulae; use signed binaries from hashicorp/tap.
+tap "hashicorp/tap"
+brew "hashicorp/tap/terraform"
+brew "hashicorp/tap/vault"
 
 # ── Kubernetes ────────────────────────────────────────────────────────────────
 brew "kubernetes-cli"
