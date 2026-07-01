@@ -19,21 +19,18 @@ ohai()  { echo "==> $*"; }
 warn()  { echo "Warning: $*" >&2; }
 abort() { echo "initMe: $*" >&2; exit 1; }
 
-# Drop `bash -c "..." --` separator when using Homebrew-style invocations.
-ARGS=("$@")
-if [[ "${ARGS[0]:-}" == "--" ]]; then
-  ARGS=("${ARGS[@]:1}")
-fi
-
 # --- Parse args (path or bootstrap flags) ---
 MYLAB_DIR="${HOME}/myLab"
-BOOT_ARGS=()
 
-if [[ ${#ARGS[@]} -gt 0 && "${ARGS[0]:0:1}" != "-" ]]; then
-  MYLAB_DIR="${ARGS[0]}"
-  BOOT_ARGS=("${ARGS[@]:1}")
-else
-  BOOT_ARGS=("${ARGS[@]}")
+# Drop an optional separator for bash -c "..." -- style invocations.
+if [[ $# -gt 0 && "${1:-}" == "--" ]]; then
+  shift
+fi
+
+# First non-flag arg is the parent install dir.
+if [[ $# -gt 0 && "${1:0:1}" != "-" ]]; then
+  MYLAB_DIR="$1"
+  shift
 fi
 
 DEST="${MYLAB_DIR}/${REPO}"
@@ -89,4 +86,4 @@ echo ""
 
 ohai "Running bootstrap.sh"
 cd "$DEST"
-exec bash bootstrap.sh "${BOOT_ARGS[@]}"
+exec bash bootstrap.sh "$@"
