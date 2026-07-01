@@ -14,18 +14,18 @@ Targets: **macOS** (`bootstrap.sh`) and **Raspberry Pi OS** (`bootstrap-pi.sh`).
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/apoorv-kulkarni/initMe/HEAD/install-macos.sh)"
 ```
 
-Then clone the rest of your repos:
+Then clone the rest of your repos (or let bootstrap do it automatically):
 
 ```bash
 cd ~/myLab/initMe
-bash clone-mylab.sh
+bash clone-mylab.sh   # optional if bootstrap already ran step 18
 exec zsh
 ```
 
-The curl installer leaves `initMe` without `.git` until you convert it to a real
-clone (steps printed at the end of `install-macos.sh`). `sync-repos.sh` cannot
-update initMe until then. After `gh auth login`, run those conversion steps, or
-use `git clone` instead of the curl path if you prefer a git checkout from the start.
+The curl installer leaves `initMe` without `.git` until bootstrap converts it to a real
+clone (step 17). `sync-repos.sh` cannot update initMe until then. After `gh auth login`,
+bootstrap handles conversion automatically, or use `git clone` instead of the curl path
+if you prefer a git checkout from the start.
 
 ### On a machine that already has tools installed
 
