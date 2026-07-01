@@ -45,5 +45,4 @@ clone_if_missing "https://github.com/rdeepak2002/reddit-place-script-2022.git"
 
 echo ""
 echo -e "${GREEN}Done.${NC} Workspace is at $MYLAB_DIR"
-echo "Next: cd $MYLAB_DIR/initMe && bash install.sh   # symlink dotfiles + Cursor rules"
-echo "       bash bootstrap.sh                         # full new-machine setup (macOS)"
+echo "Open ~/myLab in Cursor, then run 'p10k configure' if you have not already."
