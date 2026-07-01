@@ -38,13 +38,22 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
 # ── Apps ──────────────────────────────────────────────────────────────────────
+# Browsers
 cask "firefox"
 cask "google-chrome"
-cask "iterm2"
+cask "duckduckgo"
+
+# AI
 cask "cursor"
+cask "claude-code"
+cask "claude"
+cask "chatgpt"
+
+# Terminal, editors, and utilities
+cask "iterm2"
+cask "visual-studio-code"
 cask "slack"
 cask "zoom"
 cask "spotify"
-cask "visual-studio-code"
 cask "font-hack-nerd-font"
 cask "1password-cli"

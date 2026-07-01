@@ -96,7 +96,7 @@ initMe/
 | GitHub CLI | Install + `gh auth login` | Install + `gh auth login` |
 | macOS defaults | Finder, key repeat, Dock, screenshots (prompted) | — |
 | iTerm2 | Profile imported from repo | — |
-| Editors | VS Code + Cursor (casks); VS Code extensions from list | — |
+| Editors & AI | VS Code, Cursor, Claude Code, Claude, ChatGPT (casks); VS Code extensions from list | — |
 | Repo sync | launchd every 6h: ff-only `main`/`master` under `~/myLab` | cron every 6h |
 | CI | ShellCheck on push (`.github/workflows/shellcheck.yml`) | — |
 
