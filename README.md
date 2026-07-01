@@ -135,7 +135,7 @@ On a fresh machine, bootstrap will:
 `gigithub_2024` and `github_rsa` as fallbacks. OpenSSH skips missing keys.
 `IdentitiesOnly yes` limits which keys are offered to GitHub.
 
-Vault is installed via Homebrew on macOS; log in manually when you need it (`vault login`).
+Vault is installed via HashiCorp’s Homebrew tap on macOS (`hashicorp/tap/vault`); log in manually when you need it (`vault login`).
 
 ## GPG commit signing (optional)
 

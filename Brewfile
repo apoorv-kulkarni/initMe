@@ -14,7 +14,8 @@ brew "pyenv"
 
 # ── Infrastructure & secrets ──────────────────────────────────────────────────
 brew "tfenv"
-brew "vault"
+tap "hashicorp/tap"
+brew "hashicorp/tap/vault"
 
 # ── Kubernetes ────────────────────────────────────────────────────────────────
 brew "kubernetes-cli"
