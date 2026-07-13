@@ -108,6 +108,36 @@ random-string() {
   LC_ALL=C tr -dc 'a-zA-Z0-9' < /dev/urandom | fold -w 32 | head -n 1
 }
 
+# Generate a random password of a specified length (default: 20) with at least
+# one lowercase letter, one uppercase letter, one digit, and one special character.
+# Usage: genpass [length]
+genpass() {
+    local length="${1:-20}"
+    local alphabet='A-Za-z0-9!@#$%^&*()_+=-'
+    local password
+
+    if ! [[ "$length" =~ ^[0-9]+$ ]] || (( length < 8 )); then
+        echo "Usage: genpass [length]" >&2
+        echo "Length must be an integer of at least 8." >&2
+        return 1
+    fi
+
+    while true; do
+        password="$(
+            LC_ALL=C tr -dc "$alphabet" < /dev/urandom |
+                head -c "$length"
+        )"
+
+        if printf '%s' "$password" | grep -q '[a-z]' &&
+           printf '%s' "$password" | grep -q '[A-Z]' &&
+           printf '%s' "$password" | grep -q '[0-9]' &&
+           printf '%s' "$password" | grep -q '[!@#$%^&*()_+=-]'; then
+            printf '%s\n' "$password"
+            return 0
+        fi
+    done
+}
+
 # Generate one or more UUIDs (lowercase)
 # Usage: uuid [count]
 uuid() {
