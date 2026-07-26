@@ -97,6 +97,17 @@ Skip the summary for trivial answers (one-line questions, syntax help, simple re
 - Before suggesting changes to deployment configs, IaC, or anything that touches running infra, read the current state file/manifest/chart values (`terraform.tfstate`, `values.yaml`, Nomad job HCL, Kustomize overlays). Do not propose changes based on assumed current state.
 - Prefer read-only operations; escalate to writes only when asked
 
+## Version Control
+
+- **Always pass `-S` to `git commit`** (and `-s` to `git tag`). Signing is
+  configured globally via `commit.gpgsign`, but that fails silently to an
+  unsigned commit if the config is ever missing on a machine. The explicit flag
+  fails loudly instead, which is the behavior I want.
+- If `-S` fails because signing is not configured, **stop and tell me**. Do not
+  retry without `-S` and do not quietly produce an unsigned commit.
+- Never rewrite published history to add a signature. An unsigned commit that
+  is already pushed stays unsigned; sign from the next commit onward.
+
 ## Documentation Standards
 
 - **No comments when code is self-explanatory**: comments should explain *why*, not *what*
