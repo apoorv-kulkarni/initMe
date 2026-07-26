@@ -10,7 +10,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INITME_GIT_REMOTE="git@github.com:apoorv-kulkarni/initMe.git"
 INITME_DEFAULT_BRANCH="master"
 STEP=0
-TOTAL=18
+TOTAL=19
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
     echo "bootstrap.sh is for macOS only. On Linux / Raspberry Pi, run: bash bootstrap-pi.sh"
@@ -336,37 +336,86 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 15. Git config
+# 15. Git identity
 # -----------------------------------------------------------------------------
-step "Git config"
+step "Git identity"
 if [[ -z "$(git config --global user.name 2>/dev/null)" ]]; then
     if ! $DRY_RUN; then
         read -rp "  Git name: " git_name
         read -rp "  Git email: " git_email
-        read -rp "  GPG signing key ID (leave blank to skip): " git_signingkey
         git config --global user.name "$git_name"
         git config --global user.email "$git_email"
-        if [[ -n "$git_signingkey" ]]; then
-            git config --global user.signingkey "$git_signingkey"
-            git config --global commit.gpgsign true
-            git config --global gpg.program gpg
-        fi
-        echo "  Git config set."
+        echo "  Git identity set."
     else
-        echo "  [dry-run] would prompt for git name, email, and optional GPG signing key"
+        echo "  [dry-run] would prompt for git name and email"
     fi
 else
     echo "  Already configured as: $(git config --global user.name) <$(git config --global user.email)>"
 fi
 
 # -----------------------------------------------------------------------------
-# 16. Agent rules (canonical agent/ -> Cursor, Claude, myLab index)
+# 16. Git commit signing (SSH)
+# -----------------------------------------------------------------------------
+# Deliberately a separate step from the identity block above. That block only
+# runs when user.name is unset, so a machine configured before signing was set
+# up could never enable it by re-running bootstrap.
+#
+# SSH signing reuses the key from step 5, so there is no GPG keyring, agent, or
+# key expiry to manage. GitHub marks these commits Verified once the key is
+# registered a second time as a Signing Key.
+step "Git commit signing"
+signing_key=""
+[[ -f "$HOME/.ssh/id_ed25519.pub" ]] && signing_key="$HOME/.ssh/id_ed25519.pub"
+[[ -z "$signing_key" && -f "$HOME/.ssh/id_rsa.pub" ]] && signing_key="$HOME/.ssh/id_rsa.pub"
+git_version="$(git --version | awk '{print $3}')"
+
+if [[ "$(git config --global commit.gpgsign 2>/dev/null)" == "true" ]]; then
+    echo "  Already signing with $(git config --global user.signingkey)."
+elif [[ -z "$signing_key" ]]; then
+    echo "  No SSH public key found. Re-run after step 5 generates one."
+elif [[ "$(printf '%s\n2.34.0\n' "$git_version" | sort -V | head -1)" != "2.34.0" ]]; then
+    # Setting gpg.format=ssh on an older git makes every commit fail, so skip
+    # rather than leave git unusable.
+    echo "  git $git_version predates SSH signing (needs 2.34+). Skipping."
+elif $DRY_RUN; then
+    echo "  [dry-run] would offer to sign commits with $signing_key"
+else
+    read -rp "  Sign commits with $(basename "$signing_key")? [y/N]: " enable_signing
+    if [[ "$enable_signing" =~ ^[Yy]$ ]]; then
+        git config --global gpg.format ssh
+        git config --global user.signingkey "$signing_key"
+        git config --global commit.gpgsign true
+
+        # Without an allowed signers file, `git log --show-signature` reports
+        # "No principal matched" even though the signature itself is valid.
+        allowed_signers="$HOME/.ssh/allowed_signers"
+        signer_line="$(git config --global user.email) $(cat "$signing_key")"
+        if ! grep -qxF "$signer_line" "$allowed_signers" 2>/dev/null; then
+            printf '%s\n' "$signer_line" >> "$allowed_signers"
+        fi
+        git config --global gpg.ssh.allowedSignersFile "$allowed_signers"
+
+        echo ""
+        echo "  Add this to GitHub -> Settings -> SSH and GPG keys -> New SSH key,"
+        echo "  with Key type set to 'Signing Key'. This is a second entry for the"
+        echo "  same key; the existing authentication entry does not cover signing."
+        echo ""
+        cat "$signing_key"
+        echo ""
+        read -rp "  Press Enter once you've added it..." _
+    else
+        echo "  Skipped. Re-run this script to enable it later."
+    fi
+fi
+
+# -----------------------------------------------------------------------------
+# 17. Agent rules (canonical agent/ -> Cursor, Claude, myLab index)
 # -----------------------------------------------------------------------------
 step "Agent rules"
 run bash "$REPO_DIR/scripts/build-agent-adapters.sh"
 
 # -----------------------------------------------------------------------------
-# 17. Tarball install → git clone (enables sync-repos.sh to update initMe)
+# 18. Tarball install → git clone (enables sync-repos.sh to update initMe)
 # -----------------------------------------------------------------------------
 step "initMe git clone"
 if [[ -d "$REPO_DIR/.git" ]]; then
@@ -387,7 +436,7 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# 18. Clone ~/myLab repos (SSH + gh auth must be done)
+# 19. Clone ~/myLab repos (SSH + gh auth must be done)
 # -----------------------------------------------------------------------------
 step "Clone myLab repos"
 run bash "$REPO_DIR/clone-mylab.sh"

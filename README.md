@@ -118,7 +118,7 @@ bash ~/myLab/initMe/sync-repos.sh --dry-run
 
 ## Idempotency
 
-Re-running is intended to be safe: Homebrew bundle upgrades, oh-my-zsh skips if present, SSH keygen only when no key exists, launchd plist skipped if already installed, macOS defaults gated by a marker file (and an interactive prompt on first run). Git **name/email/GPG** are prompted only when `user.name` is unset.
+Re-running is intended to be safe: Homebrew bundle upgrades, oh-my-zsh skips if present, SSH keygen only when no key exists, launchd plist skipped if already installed, macOS defaults gated by a marker file (and an interactive prompt on first run). Git **name/email** are prompted only when `user.name` is unset. **Commit signing** is a separate step, offered on every run until it is enabled, so it can be turned on long after the identity was set.
 
 ## Keys & secrets
 
@@ -129,7 +129,8 @@ On a fresh machine, bootstrap will:
 1. Generate or import an SSH key (`~/.ssh/id_ed25519`) and load it into the macOS keychain (Pi: keygen without keychain)
 2. Symlink `ssh_config` to `~/.ssh/config` (backs up a plain file to `~/.ssh/config.bak.<timestamp>` first)
 3. Run `gh auth login` for GitHub
-4. **Prompt** for git name / email / optional GPG key when `user.name` is not set (stored in `~/.gitconfig`, not in this repo)
+4. **Prompt** for git name / email when `user.name` is not set (stored in `~/.gitconfig`, not in this repo)
+5. **Offer** SSH commit signing, reusing the key from step 1 (see below)
 
 `ssh_config` points GitHub at `id_ed25519` (bootstrap default), then
 `gigithub_2024` and `github_rsa` as fallbacks. OpenSSH skips missing keys.
@@ -137,15 +138,35 @@ On a fresh machine, bootstrap will:
 
 Terraform and Vault install via HashiCorp’s official Homebrew tap (`hashicorp/tap`, declared as trusted in the Brewfile). Log into Vault manually when you need it (`vault login`).
 
-## GPG commit signing (optional)
+## Commit signing (optional)
 
-Bootstrap prompts for a signing key ID on first run. To enable later:
+Bootstrap offers SSH commit signing, reusing the `~/.ssh/id_ed25519` key from
+the SSH step. There is no GPG keyring, agent, or key expiry to manage. The
+offer repeats on every run until signing is enabled, so it is not tied to
+first-run setup.
+
+To enable manually:
 
 ```bash
-git config --global user.signingkey <KEY_ID>
+git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_ed25519.pub
 git config --global commit.gpgsign true
-git config --global gpg.program gpg   # or /opt/homebrew/bin/gpg on Apple Silicon
+
+# Without this, `git log --show-signature` reports "No principal matched"
+# even though the signature itself is valid.
+printf '%s %s\n' "$(git config --global user.email)" \
+    "$(cat ~/.ssh/id_ed25519.pub)" >> ~/.ssh/allowed_signers
+git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
 ```
+
+For GitHub to mark commits **Verified**, add the same public key a second time
+under Settings → SSH and GPG keys with Key type set to **Signing Key**. The
+existing authentication entry does not cover signing.
+
+Requires git 2.34+. Bootstrap skips the step on anything older, because setting
+`gpg.format=ssh` there makes every commit fail.
+
+`bootstrap-pi.sh` still uses the older GPG prompt, tied to first-run setup.
 
 ## AI agent config
 
