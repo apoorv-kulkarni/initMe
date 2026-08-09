@@ -26,7 +26,10 @@ instead of just answering in chat.
 
 When something durable is learned in a session, pick its home by how broadly
 useful it is. Rungs run from most throwaway to most permanent; promote a
-learning up a rung only once it has earned the wider scope:
+learning up a rung only once it has earned the wider scope.
+
+When you say "document this," map it to the promotion ladder instead of
+defaulting to chat-only.
 
 1. **This chat only** - a one-off fact you will not reuse. Do nothing.
 2. **Personal notes** - durable but personal, never committed. The default
