@@ -2,6 +2,8 @@ workspace.mdc	00-workspace.md	true	Load repo context before exploring, and route
 cursorrules.mdc	01-core-behavior.md	true	Personal AI behavioral core. Interaction guidelines, surgical edits, simplicity bias, grounding/evidence requirements, infra safety, docs.
 iterative-work.mdc	02-iterative-work.md	true	Bounded iterative work protocol for autonomous retries.
 no-em-dashes.mdc	references/no-em-dashes.md	true	Do not use em dashes in any output
+plain-language.mdc	references/plain-language.md	true	Write RFCs, Confluence pages, PRs, and messages in clear plain language for a broad technical audience.
+diagrams.mdc	references/diagrams.md	true	Use Mermaid diagrams when they make flows, systems, or before-and-after changes easier to understand.
 coding-reference.mdc	references/coding-reference.md	false	Cross-language reference - project workflow, languages, code standards, design principles, error handling, dependency patterns, tool aliases. Read when writing or reviewing code.
 debugging-method.mdc	references/debugging-method.md	false	Generic debugging methods (domain-agnostic). Read when diagnosing a failure, an unexpected result, a flaky/silent CI job, or any situation where something should work but does not, in any repo or stack.
 pr-cleanup-after-merge.mdc	references/pr-cleanup-after-merge.md	false	Post-PR cleanup workflow. Read this AFTER you help create a PR (gh pr create, git push of a new branch). It schedules a delayed check to verify the PR merged and prune local branches. Not needed otherwise.
