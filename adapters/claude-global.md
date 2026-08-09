@@ -6,11 +6,14 @@ Read in order when working under `~/myLab/`:
 2. `~/myLab/initMe/agent/00-workspace.md`
 3. `~/myLab/initMe/agent/01-core-behavior.md`
 4. `~/myLab/initMe/agent/02-iterative-work.md`
+5. `~/myLab/initMe/agent/references/no-em-dashes.md`
+6. `~/myLab/initMe/agent/references/plain-language.md`
+7. `~/myLab/initMe/agent/references/diagrams.md`
 
 Per-repo `AGENTS.md`, `CLAUDE.md`, or `README.md` in the repo being edited
 overrides workspace docs for that repo.
 
 When editing **initMe**, also read `~/myLab/initMe/AGENTS.md`.
 
-Load files under `~/myLab/initMe/agent/references/` only when the task needs
-them (coding standards, debugging, PR cleanup).
+Load other files under `~/myLab/initMe/agent/references/` only when the task
+needs them (coding standards, debugging, PR cleanup).
