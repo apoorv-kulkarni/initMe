@@ -54,3 +54,24 @@ standards) live in `agent/` and are installed to tool-specific adapters by
 - **Workspace index:** `~/myLab/AGENTS.md` (when `~/myLab/` exists)
 
 Per-repo `AGENTS.md` or `README.md` overrides workspace docs for that repo.
+
+## Cursor Cloud specific instructions
+
+This repo is a shell-script bootstrap/dotfiles project. There is no compile,
+build, or test suite. The only automated verification is ShellCheck, and the
+"application" is the bootstrap/install scripts themselves.
+
+- Lint (also the CI check in `.github/workflows/shellcheck.yml`):
+ `git ls-files -z '*.sh' | xargs -0 shellcheck`. Requires the `shellcheck`
+ binary, which the environment update script installs via `apt`.
+- Platform gating matters. The Cloud VM is Linux, so only `install.sh`,
+ `sync-repos.sh`, and `bootstrap-pi.sh` run here. `bootstrap.sh` and
+ `install-macos.sh` are macOS-only and exit immediately on Linux.
+- To exercise core behavior without a full machine setup, run `bash install.sh`.
+ It is idempotent and safe to re-run: it symlinks dotfiles into `$HOME`, adds
+ `git/gitconfig` to `~/.gitconfig` via `include.path`, generates
+ `~/.cursor/rules/*.mdc` from `agent/manifest.tsv`, and links
+ `~/.claude/CLAUDE.md`. It backs up any pre-existing plain files first.
+- For the heavier bootstrap scripts, prefer `--dry-run` (supported by
+ `bootstrap-pi.sh`, `bootstrap.sh`, and `sync-repos.sh`) to preview steps with
+ no mutations, per the "Before changing anything" guidance above.
