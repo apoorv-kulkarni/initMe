@@ -39,3 +39,18 @@ A correct config file does not mean a running process is using it.
   **positive signal that should be present and isn't** (the log line, the
   registered attribute, the fingerprint) rather than waiting for an error
   that never comes. Absence of an error is not evidence of success.
+
+## A failed command line may never have run your command
+
+Shell-level failures abort before your command executes, so the output is
+not a result about your subject. Empty output means "did not run", not
+"not there".
+
+- Unmatched globs (zsh `no matches found`), quoting errors, and unset
+  variables under `set -u` all abort the whole line, so later `&&`-chained
+  checks never execute.
+- A negative result from a command you did not confirm actually ran is not
+  evidence. Re-run the specific check in isolation before concluding.
+- Especially dangerous when probing for existence ("is the file there?",
+  "is it registered?"), where the abort is indistinguishable from a real
+  negative.
